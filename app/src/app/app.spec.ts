@@ -5,13 +5,22 @@ describe('App', () => {
   let app: App & {
     title: () => string;
     language: () => 'es' | 'en';
-    labels: () => { clearFilters: string; catalog: string };
-    tools: () => Array<{ name: string; category: string; useCase: string }>;
-    filteredTools: () => Array<{ category: string; name: string }>;
+    labels: () => {
+      clearFilters: string;
+      catalog: string;
+      compareTools: string;
+      compareEmpty: string;
+      compareSelectionHint: string;
+    };
+    tools: () => Array<{ name: string; category: string; useCase: string; price: string; score: number }>;
+    filteredTools: () => Array<{ category: string; name: string; id: number }>;
+    compareToolsList: () => Array<{ id: number; name: string }>;
     searchTerm: { set: (value: string) => void };
     updateLanguage: (event: { target: { value: string } }) => void;
     selectCategory: (category: string) => void;
     clearFilters: () => void;
+    toggleCompareTool: (toolId: number) => void;
+    isToolSelectedForComparison: (toolId: number) => boolean;
   };
 
   beforeEach(() => {
@@ -62,5 +71,21 @@ describe('App', () => {
     app.clearFilters();
     app.searchTerm.set('desarrollo');
     expect(app.filteredTools().length).toBeGreaterThan(0);
+  });
+
+  it('should allow selecting tools to compare and show a comparison block with at least two items', () => {
+    app.toggleCompareTool(1);
+    app.toggleCompareTool(2);
+
+    expect(app.isToolSelectedForComparison(1)).toBe(true);
+    expect(app.isToolSelectedForComparison(2)).toBe(true);
+    expect(app.compareToolsList().length).toBe(2);
+  });
+
+  it('should show a proper empty-state message when the user has not selected enough tools', () => {
+    app.toggleCompareTool(1);
+
+    expect(app.compareToolsList().length).toBe(1);
+    expect(app.labels().compareEmpty).toContain('al menos dos');
   });
 });

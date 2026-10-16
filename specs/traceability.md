@@ -20,6 +20,16 @@ Language Selector
 ↓
 Localization Tests
 
+COM-001
+↓
+Comparison Matrix and Decision Support
+↓
+Comparison Page
+↓
+Selection + Matrix Components
+↓
+Comparison Tests
+
 FR-001
 ↓
 Catalog Feature

@@ -77,7 +77,17 @@
             </div>
           </dl>
 
-          <button type="button" class="primary-button">{{ labels().viewDetails }}</button>
+          <div class="card-actions">
+            <button type="button" class="primary-button">{{ labels().viewDetails }}</button>
+            <button
+              type="button"
+              class="compare-toggle"
+              [class.is-selected]="isToolSelectedForComparison(tool.id)"
+              (click)="toggleCompareTool(tool.id)"
+            >
+              {{ comparisonButtonLabel(tool.id) }}
+            </button>
+          </div>
         </article>
       }
     </section>
@@ -87,4 +97,46 @@
       <p>{{ labels().noResultsText }}</p>
     </section>
   }
+
+  <section class="comparison-panel" aria-live="polite">
+    <div class="comparison-header">
+      <div>
+        <p class="eyebrow">{{ labels().comparisonTitle }}</p>
+        <h2>{{ labels().comparisonTitle }}</h2>
+      </div>
+      <button type="button" class="secondary-button" (click)="clearComparison()">
+        {{ labels().clearComparison }}
+      </button>
+    </div>
+
+    @if (compareToolsList().length >= 2) {
+      <p class="comparison-hint">{{ labels().compareSelectionHint }}</p>
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table" aria-label="Comparison matrix">
+          <thead>
+            <tr>
+              <th>{{ labels().comparisonCriterion }}</th>
+              @for (tool of compareToolsList(); track tool.id) {
+                <th>{{ tool.name }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of comparisonRows(); track row.key) {
+              <tr>
+                <th>{{ row.label }}</th>
+                @for (value of row.values; track value) {
+                  <td>{{ value }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="comparison-empty-state">
+        <p>{{ labels().compareEmpty }}</p>
+      </div>
+    }
+  </section>
 </main>

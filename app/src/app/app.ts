@@ -22,6 +22,20 @@ type TranslationSet = {
   viewDetails: string;
   noResultsTitle: string;
   noResultsText: string;
+  compareTools: string;
+  compareSelectionHint: string;
+  compareEmpty: string;
+  comparisonTitle: string;
+  comparisonCriterion: string;
+  clearComparison: string;
+  unavailable: string;
+  rowPrice: string;
+  rowCapability: string;
+  rowSpeed: string;
+  rowUseCase: string;
+  rowIntegration: string;
+  rowStrengths: string;
+  rowLimitations: string;
 };
 
 const translations: Record<Language, TranslationSet> = {
@@ -34,6 +48,20 @@ const translations: Record<Language, TranslationSet> = {
     viewDetails: 'Ver detalles',
     noResultsTitle: 'No hay herramientas que coincidan con tus filtros.',
     noResultsText: 'Prueba a quitar uno o más filtros o buscar un término más general.',
+    compareTools: 'Comparar',
+    compareSelectionHint: 'Elige dos o tres herramientas para ver sus diferencias clave.',
+    compareEmpty: 'Selecciona al menos dos herramientas para comparar.',
+    comparisonTitle: 'Comparación rápida',
+    comparisonCriterion: 'Criterio',
+    clearComparison: 'Limpiar comparación',
+    unavailable: 'No disponible',
+    rowPrice: 'Precio',
+    rowCapability: 'Capacidad',
+    rowSpeed: 'Velocidad',
+    rowUseCase: 'Caso de uso',
+    rowIntegration: 'Integración',
+    rowStrengths: 'Fortalezas',
+    rowLimitations: 'Limitaciones',
   },
   en: {
     eyebrow: 'AI Compare Hub',
@@ -44,6 +72,20 @@ const translations: Record<Language, TranslationSet> = {
     viewDetails: 'View details',
     noResultsTitle: 'No tools match your filters.',
     noResultsText: 'Try removing one or more filters or searching for a broader term.',
+    compareTools: 'Compare',
+    compareSelectionHint: 'Choose two or three tools to review their key differences.',
+    compareEmpty: 'Select at least two tools to compare.',
+    comparisonTitle: 'Quick comparison',
+    comparisonCriterion: 'Criterion',
+    clearComparison: 'Clear comparison',
+    unavailable: 'Not available',
+    rowPrice: 'Pricing',
+    rowCapability: 'Capability',
+    rowSpeed: 'Speed',
+    rowUseCase: 'Use case',
+    rowIntegration: 'Integration',
+    rowStrengths: 'Strengths',
+    rowLimitations: 'Limitations',
   },
 };
 
@@ -251,6 +293,7 @@ export class App {
   protected readonly searchTerm = signal('');
   protected readonly selectedCategory = signal('All');
   protected readonly language = signal<Language>('es');
+  protected readonly selectedComparisonIds = signal<number[]>([]);
 
   protected readonly categories = ['All', ...new Set(TOOLS.map((tool) => tool.category))];
 
@@ -275,6 +318,10 @@ export class App {
     });
   });
 
+  protected readonly compareToolsList = computed(() =>
+    this.tools().filter((tool) => this.selectedComparisonIds().includes(tool.id)),
+  );
+
   protected readonly resultLabel = computed(() => {
     const count = this.filteredTools().length;
 
@@ -283,6 +330,26 @@ export class App {
     }
 
     return `${count} herramienta${count === 1 ? '' : 's'}`;
+  });
+
+  protected readonly comparisonRows = computed(() => {
+    const tools = this.compareToolsList();
+    const labels = this.labels();
+
+    const rows = [
+      { key: 'price', label: labels.rowPrice },
+      { key: 'capability', label: labels.rowCapability },
+      { key: 'speed', label: labels.rowSpeed },
+      { key: 'useCase', label: labels.rowUseCase },
+      { key: 'integration', label: labels.rowIntegration },
+      { key: 'strengths', label: labels.rowStrengths },
+      { key: 'limitations', label: labels.rowLimitations },
+    ];
+
+    return rows.map((row) => ({
+      ...row,
+      values: tools.map((tool) => this.getComparisonValue(tool, row.key)),
+    }));
   });
 
   protected updateSearch(event: Event): void {
@@ -305,5 +372,54 @@ export class App {
   protected clearFilters(): void {
     this.searchTerm.set('');
     this.selectedCategory.set('All');
+  }
+
+  protected toggleCompareTool(toolId: number): void {
+    const selected = this.selectedComparisonIds();
+
+    if (selected.includes(toolId)) {
+      this.selectedComparisonIds.set(selected.filter((id) => id !== toolId));
+      return;
+    }
+
+    const next = [...selected, toolId];
+    if (next.length > 3) {
+      next.shift();
+    }
+
+    this.selectedComparisonIds.set(next);
+  }
+
+  protected isToolSelectedForComparison(toolId: number): boolean {
+    return this.selectedComparisonIds().includes(toolId);
+  }
+
+  protected clearComparison(): void {
+    this.selectedComparisonIds.set([]);
+  }
+
+  protected getComparisonValue(tool: Tool, key: string): string {
+    switch (key) {
+      case 'price':
+        return tool.price;
+      case 'capability':
+        return tool.score >= 95 ? 'Alta' : tool.score >= 88 ? 'Media' : 'Baja';
+      case 'speed':
+        return tool.score >= 92 ? 'Alta' : tool.score >= 85 ? 'Media' : 'Baja';
+      case 'useCase':
+        return tool.useCase;
+      case 'integration':
+        return tool.provider === 'OpenAI' || tool.provider === 'Anthropic' || tool.provider === 'Google' ? 'Alta' : 'Media';
+      case 'strengths':
+        return tool.summary;
+      case 'limitations':
+        return tool.score < 85 ? 'Menor contexto o precisión' : 'Dependencia del caso de uso';
+      default:
+        return this.labels().unavailable;
+    }
+  }
+
+  protected comparisonButtonLabel(toolId: number): string {
+    return this.isToolSelectedForComparison(toolId) ? 'Quitar' : this.labels().compareTools;
   }
 }
