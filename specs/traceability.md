@@ -70,6 +70,16 @@ Comparison Matrix
 ↓
 Comparison Tests
 
+REC-001
+↓
+Recommendation Engine and Personalization
+↓
+Recommendation Panel
+↓
+Profile + Recommendation Logic
+↓
+Recommendation Tests
+
 FR-009
 ↓
 Recommendation Engine

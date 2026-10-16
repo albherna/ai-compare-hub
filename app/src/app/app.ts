@@ -360,6 +360,11 @@ export class App {
   protected readonly language = signal<Language>('es');
   protected readonly selectedComparisonIds = signal<number[]>([]);
   protected readonly favoriteToolIds = signal<number[]>([]);
+  protected readonly recommendationProfile = signal({
+    objective: 'desarrollo',
+    budget: 'moderate',
+    experience: 'advanced',
+  });
 
   protected readonly categories = ['All', ...new Set(TOOLS.map((tool) => tool.category))];
 
@@ -514,5 +519,13 @@ export class App {
 
   protected favoriteButtonLabel(toolId: number): string {
     return this.isFavorite(toolId) ? this.labels().removeFavorite : this.labels().favoriteTool;
+  }
+
+  protected setRecommendationProfile(profile: { objective: string; budget: string; experience: string }): void {
+    this.recommendationProfile.set({
+      objective: profile.objective || 'desarrollo',
+      budget: profile.budget || 'moderate',
+      experience: profile.experience || 'advanced',
+    });
   }
 }
