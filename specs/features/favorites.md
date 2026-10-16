@@ -1,36 +1,50 @@
-# Favoritos
+# FAV-001 — Favorites and Saved Shortlist
 
 ## Objetivo
-Permitir al usuario guardar herramientas, comparativas y decisiones para continuar luego su proceso de evaluación sin perder contexto.
+Permitir a los usuarios guardar herramientas relevantes como favoritas para revisitarlas más tarde, crear una shortlist de opciones y facilitar la toma de decisión sin perder contexto.
 
 ## User Stories
-- Como usuario que explora, quiero guardar herramientas para revisarlas después.
-- Como usuario en proceso de decisión, quiero conservar comparativas de interés.
-- Como usuario recurrente, quiero acceder rápido a mis herramientas preferidas y decisiones previas.
+- Como usuario explorador, quiero guardar herramientas que me interesan para revisarlas después.
+- Como usuario de negocio, quiero crear una shortlist de opciones relevantes antes de decidir.
+- Como usuario recurrente, quiero mantener una lista clara de herramientas elegidas para consultarlas más tarde.
+- Como usuario técnico, quiero diferenciar entre herramientas vistas y herramientas priorizadas.
 
 ## Acceptance Criteria
-- El usuario puede guardar una herramienta como favorita.
-- El usuario puede ver una lista de favoritos desde su perfil o sección dedicada.
-- El usuario puede eliminar elementos guardados.
-- Las herramientas guardadas conservan su estado actual y su contexto de detalle.
-- El sistema presenta favoritos de forma clara y accesible.
+- El usuario puede marcar o desmarcar una herramienta como favorita desde el catálogo.
+- La lista de favoritos se muestra de forma clara y accesible.
+- El usuario puede ver cuántas herramientas tiene guardadas en su shortlist.
+- Las herramientas guardadas mantienen nombre, categoría y caso de uso para reconocerlas rápidamente.
+- La acción de guardar favorita tiene un feedback visual claro.
+- El usuario puede quitar una herramienta de favoritos sin afectar al resto de la lista.
+- La vista de favoritos presenta un estado vacío cuando no hay elementos guardados.
 
 ## Business Rules
-- Los favoritos deben mantenerse asociados al usuario o a su sesión según el contexto de uso.
-- La acción de guardar debe ofrecer feedback claro de confirmación.
-- La lista de favoritos debe mantenerse actualizada y ordenada de forma comprensible.
-- Se debe distinguir entre herramientas favoritas y comparativas guardadas.
+- La acción de favorito debe ser reversible.
+- Una herramienta no debe repetirse en la lista de favoritos.
+- La shortlist debe reflejar el estado actual del catálogo y no duplicar información.
+- El contenido mostrado en favoritos debe ser suficiente para reconocer la herramienta y su propósito.
+- La shortlist debe apoyar decisiones de comparación y priorización, sin reemplazar la comparación formal.
 
 ## Edge Cases
-- Usuario sin favoritos aún.
-- Favorito eliminado accidentalmente.
-- Cambio de categoría o actualización de ficha tras ser guardada.
-- Repetición de la misma herramienta en varios contextos.
-- Acceso desde varios dispositivos o sesiones.
+- El usuario intenta marcar la misma herramienta varias veces.
+- La herramienta se elimina del catálogo o cambia su información principal.
+- El usuario tiene cero favoritos.
+- La lista de favoritos supera la altura de la vista.
+- El usuario navega entre catálogo y favoritos sin perder contexto.
+- Se mezclan herramientas de distintas categorías en la shortlist.
 
 ## Test Scenarios
-- Verificar que guardar una herramienta genera un favorito visible.
-- Verificar que la eliminación de un favorito actualiza la vista correctamente.
-- Verificar que un usuario sin favoritos ve un estado vacío apropiado.
-- Verificar que un favorito mantiene su información actualizada tras cambios de contenido.
-- Verificar que favoritos y comparativas guardadas se gestionan sin conflicto.
+- Verificar que marcar una herramienta como favorita la añade a la shortlist.
+- Verificar que desmarcarla la elimina de la vista sin afectar al resto.
+- Verificar que la lista de favoritos no duplica herramientas.
+- Verificar que una lista vacía muestra un estado vacío apropiado.
+- Verificar que la cantidad de favoritos se actualiza correctamente.
+- Verificar que la UI refleja el estado favorito en cada herramienta del catálogo.
+- Verificar que el usuario puede volver al catálogo sin perder la sesión de favoritos.
+
+## Related Requirements
+- FR-004
+- FR-006
+- FR-010
+- FR-013
+- FR-016

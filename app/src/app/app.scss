@@ -77,7 +77,8 @@ h1 {
 .secondary-button,
 .primary-button,
 .filter-chip,
-.compare-toggle {
+.compare-toggle,
+.favorite-toggle {
   border: none;
   border-radius: 999px;
   transition: all 0.2s ease;
@@ -278,6 +279,18 @@ h1 {
   color: white;
 }
 
+.favorite-toggle {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+}
+
+.favorite-toggle.is-favorite {
+  background: #f59e0b;
+  color: white;
+}
+
 .empty-state,
 .comparison-empty-state {
   background: rgba(255, 255, 255, 0.8);
@@ -293,7 +306,8 @@ h1 {
   color: #475569;
 }
 
-.comparison-panel {
+.comparison-panel,
+.favorites-panel {
   margin-top: 2.5rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.8);
@@ -353,6 +367,27 @@ h1 {
 .comparison-table td {
   color: #1e293b;
   line-height: 1.5;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.favorite-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid #dfe7f5;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.favorite-card h3 {
+  margin: 0;
 }
 
 .sr-only {

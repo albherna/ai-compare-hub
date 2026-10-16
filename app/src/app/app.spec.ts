@@ -11,29 +11,50 @@ describe('App', () => {
       compareTools: string;
       compareEmpty: string;
       compareSelectionHint: string;
+      favorites: string;
+      favoritesEmpty: string;
+      favoriteTool: string;
+      removeFavorite: string;
     };
     tools: () => Array<{ name: string; category: string; useCase: string; price: string; score: number }>;
     filteredTools: () => Array<{ category: string; name: string; id: number }>;
     compareToolsList: () => Array<{ id: number; name: string }>;
+    favoritesList: () => Array<{ id: number; name: string }>;
     searchTerm: { set: (value: string) => void };
     updateLanguage: (event: { target: { value: string } }) => void;
     selectCategory: (category: string) => void;
     clearFilters: () => void;
     toggleCompareTool: (toolId: number) => void;
     isToolSelectedForComparison: (toolId: number) => boolean;
+    toggleFavorite: (toolId: number) => void;
+    isFavorite: (toolId: number) => boolean;
   };
 
   beforeEach(() => {
     app = new App() as App & {
       title: () => string;
       language: () => 'es' | 'en';
-      labels: () => { clearFilters: string; catalog: string };
-      tools: () => Array<{ name: string; category: string; useCase: string }>;
-      filteredTools: () => Array<{ category: string; name: string }>;
+      labels: () => {
+        clearFilters: string;
+        catalog: string;
+        compareTools: string;
+        compareEmpty: string;
+        compareSelectionHint: string;
+        favorites: string;
+        favoritesEmpty: string;
+        favoriteTool: string;
+        removeFavorite: string;
+      };
+      tools: () => Array<{ name: string; category: string; useCase: string }>; 
+      filteredTools: () => Array<{ category: string; name: string }>; 
+      compareToolsList: () => Array<{ id: number; name: string }>;
+      favoritesList: () => Array<{ id: number; name: string }>;
       searchTerm: { set: (value: string) => void };
       updateLanguage: (event: { target: { value: string } }) => void;
       selectCategory: (category: string) => void;
       clearFilters: () => void;
+      toggleFavorite: (toolId: number) => void;
+      isFavorite: (toolId: number) => boolean;
     };
   });
 
@@ -87,5 +108,21 @@ describe('App', () => {
 
     expect(app.compareToolsList().length).toBe(1);
     expect(app.labels().compareEmpty).toContain('al menos dos');
+  });
+
+  it('should allow saving and removing a tool from the favorites list', () => {
+    app.toggleFavorite(1);
+
+    expect(app.isFavorite(1)).toBe(true);
+    expect(app.favoritesList().some((tool) => tool.id === 1)).toBe(true);
+
+    app.toggleFavorite(1);
+    expect(app.isFavorite(1)).toBe(false);
+    expect(app.favoritesList().some((tool) => tool.id === 1)).toBe(false);
+  });
+
+  it('should show an empty message when there are no favorite tools yet', () => {
+    expect(app.favoritesList().length).toBe(0);
+    expect(app.labels().favoritesEmpty).toContain('sin favoritos');
   });
 });

@@ -30,6 +30,16 @@ Selection + Matrix Components
 ↓
 Comparison Tests
 
+FAV-001
+↓
+Favorites and Saved Shortlist
+↓
+Favorites Panel
+↓
+Favorite Toggle + Saved State
+↓
+Favorites Tests
+
 FR-001
 ↓
 Catalog Feature

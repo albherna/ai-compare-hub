@@ -36,6 +36,10 @@ type TranslationSet = {
   rowIntegration: string;
   rowStrengths: string;
   rowLimitations: string;
+  favorites: string;
+  favoriteTool: string;
+  removeFavorite: string;
+  favoritesEmpty: string;
 };
 
 const translations: Record<Language, TranslationSet> = {
@@ -62,6 +66,10 @@ const translations: Record<Language, TranslationSet> = {
     rowIntegration: 'Integración',
     rowStrengths: 'Fortalezas',
     rowLimitations: 'Limitaciones',
+    favorites: 'Favoritos',
+    favoriteTool: 'Guardar favorito',
+    removeFavorite: 'Quitar favorito',
+    favoritesEmpty: 'sin favoritos guardados',
   },
   en: {
     eyebrow: 'AI Compare Hub',
@@ -86,6 +94,10 @@ const translations: Record<Language, TranslationSet> = {
     rowIntegration: 'Integration',
     rowStrengths: 'Strengths',
     rowLimitations: 'Limitations',
+    favorites: 'Favorites',
+    favoriteTool: 'Save favorite',
+    removeFavorite: 'Remove favorite',
+    favoritesEmpty: 'No favorites saved yet',
   },
 };
 
@@ -294,6 +306,7 @@ export class App {
   protected readonly selectedCategory = signal('All');
   protected readonly language = signal<Language>('es');
   protected readonly selectedComparisonIds = signal<number[]>([]);
+  protected readonly favoriteToolIds = signal<number[]>([]);
 
   protected readonly categories = ['All', ...new Set(TOOLS.map((tool) => tool.category))];
 
@@ -320,6 +333,10 @@ export class App {
 
   protected readonly compareToolsList = computed(() =>
     this.tools().filter((tool) => this.selectedComparisonIds().includes(tool.id)),
+  );
+
+  protected readonly favoritesList = computed(() =>
+    this.tools().filter((tool) => this.favoriteToolIds().includes(tool.id)),
   );
 
   protected readonly resultLabel = computed(() => {
@@ -421,5 +438,24 @@ export class App {
 
   protected comparisonButtonLabel(toolId: number): string {
     return this.isToolSelectedForComparison(toolId) ? 'Quitar' : this.labels().compareTools;
+  }
+
+  protected toggleFavorite(toolId: number): void {
+    const current = this.favoriteToolIds();
+
+    if (current.includes(toolId)) {
+      this.favoriteToolIds.set(current.filter((id) => id !== toolId));
+      return;
+    }
+
+    this.favoriteToolIds.set([...current, toolId]);
+  }
+
+  protected isFavorite(toolId: number): boolean {
+    return this.favoriteToolIds().includes(toolId);
+  }
+
+  protected favoriteButtonLabel(toolId: number): string {
+    return this.isFavorite(toolId) ? this.labels().removeFavorite : this.labels().favoriteTool;
   }
 }

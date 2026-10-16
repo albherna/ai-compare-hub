@@ -87,6 +87,14 @@
             >
               {{ comparisonButtonLabel(tool.id) }}
             </button>
+            <button
+              type="button"
+              class="favorite-toggle"
+              [class.is-favorite]="isFavorite(tool.id)"
+              (click)="toggleFavorite(tool.id)"
+            >
+              {{ favoriteButtonLabel(tool.id) }}
+            </button>
           </div>
         </article>
       }
@@ -136,6 +144,35 @@
     } @else {
       <div class="comparison-empty-state">
         <p>{{ labels().compareEmpty }}</p>
+      </div>
+    }
+  </section>
+
+  <section class="favorites-panel" aria-live="polite">
+    <div class="comparison-header">
+      <div>
+        <p class="eyebrow">{{ labels().favorites }}</p>
+        <h2>{{ labels().favorites }}</h2>
+      </div>
+    </div>
+
+    @if (favoritesList().length > 0) {
+      <div class="favorites-grid">
+        @for (tool of favoritesList(); track tool.id) {
+          <article class="favorite-card">
+            <div>
+              <p class="tool-category">{{ tool.category }}</p>
+              <h3>{{ tool.name }}</h3>
+            </div>
+            <button type="button" class="favorite-toggle is-favorite" (click)="toggleFavorite(tool.id)">
+              {{ labels().removeFavorite }}
+            </button>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="comparison-empty-state">
+        <p>{{ labels().favoritesEmpty }}</p>
       </div>
     }
   </section>
