@@ -169,4 +169,32 @@ La plataforma se posiciona como un recurso de referencia para comparación y dec
 4. Benchmark and data-quality improvements
 5. Scale, SEO and product maturity
 
+### 9.1 Orden recomendado por sprints
+
+#### Sprint 1 — Catalog
+Implementar:
+- Tool Model
+- Catalog Page
+- Search
+- Filtering
+
+#### Sprint 2 — Comparison
+Implementar:
+- Compare View
+- Compare Service
+
+#### Sprint 3 — Benchmarks
+Implementar:
+- Rankings
+- Score Visualization
+
+#### Sprint 4 — Favorites
+Implementar:
+- User Favorites
+
+#### Sprint 5 — Recommendation Engine
+Implementar:
+- User Profile
+- Recommendation Logic
+
 Este orden permite entregar valor desde el primer sprint con foco en la decisión del usuario, y ofrece una base sólida para la evolución posterior del producto.
