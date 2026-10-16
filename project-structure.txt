@@ -1,0 +1,29 @@
+ai-compare-hub/
+├── .github/
+│   └── (configuración de repositorio y automatizaciones)
+├── .specify/
+│   └── (artefactos y plantillas de especificación)
+├── specs/
+│   ├── architecture/
+│   │   └── system-design.md
+│   ├── features/
+│   │   ├── catalog.md
+│   │   ├── comparison.md
+│   │   ├── recommendation-engine.md
+│   │   ├── benchmarks.md
+│   │   └── favorites.md
+│   ├── ui/
+│   │   ├── pages.md
+│   │   ├── catalog-page.md
+│   │   ├── comparison-page.md
+│   │   └── benchmark-page.md
+│   ├── definition-of-done.md
+│   ├── domain-model.md
+│   ├── glossary.md
+│   ├── requirements.md
+│   ├── roadmap.md
+│   ├── traceability.md
+│   └── vision.md
+├── project-structure.txt
+├── README.md (si se agrega más adelante)
+└── .gitignore (si se agrega más adelante)
