@@ -7,7 +7,10 @@
 }
 
 button,
-input {
+input,
+select,
+th,
+td {
   font: inherit;
 }
 
@@ -73,7 +76,8 @@ h1 {
 
 .secondary-button,
 .primary-button,
-.filter-chip {
+.filter-chip,
+.compare-toggle {
   border: none;
   border-radius: 999px;
   transition: all 0.2s ease;
@@ -115,7 +119,8 @@ h1 {
 .search-field input:focus,
 .filter-chip:focus-visible,
 .primary-button:focus-visible,
-.secondary-button:focus-visible {
+.secondary-button:focus-visible,
+.compare-toggle:focus-visible {
   outline: 3px solid rgba(79, 70, 229, 0.3);
   outline-offset: 2px;
 }
@@ -241,34 +246,113 @@ h1 {
   font-weight: 600;
 }
 
-.primary-button {
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-top: auto;
-  background: #111827;
-  color: white;
+}
+
+.primary-button,
+.compare-toggle {
   padding: 0.8rem 1rem;
   cursor: pointer;
+}
+
+.primary-button {
+  background: #111827;
+  color: white;
 }
 
 .primary-button:hover {
   background: #1f2937;
 }
 
-.empty-state {
+.compare-toggle {
+  background: #e0e7ff;
+  color: #312e81;
+}
+
+.compare-toggle.is-selected {
+  background: #4f46e5;
+  color: white;
+}
+
+.empty-state,
+.comparison-empty-state {
   background: rgba(255, 255, 255, 0.8);
   border: 1px dashed #cbd5e1;
   border-radius: 1.1rem;
   padding: 2.5rem 1.5rem;
-  text-align: center;
 }
 
-.empty-state h3 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-}
-
+.empty-state h3,
+.comparison-empty-state p,
 .empty-state p {
   margin: 0;
   color: #475569;
+}
+
+.comparison-panel {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #dde7f5;
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.03);
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.comparison-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.comparison-hint {
+  margin: 0 0 1rem;
+  color: #475569;
+}
+
+.comparison-table-wrapper {
+  overflow-x: auto;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid #dfe7f5;
+  padding: 0.8rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.comparison-table thead th {
+  background: #eef2ff;
+  color: #312e81;
+  font-weight: 700;
+}
+
+.comparison-table tbody th {
+  background: #f8fafc;
+  color: #0f172a;
+  min-width: 120px;
+}
+
+.comparison-table td {
+  color: #1e293b;
+  line-height: 1.5;
 }
 
 .sr-only {
