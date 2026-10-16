@@ -148,6 +148,47 @@
     }
   </section>
 
+  <section class="recommendations-panel" aria-live="polite">
+    <div class="comparison-header">
+      <div>
+        <p class="eyebrow">{{ labels().recommendations }}</p>
+        <h2>{{ labels().profileTitle }}</h2>
+      </div>
+    </div>
+
+    <div class="recommendation-profile">
+      <label>
+        <span>{{ labels().profileTitle }}</span>
+        <select [value]="recommendationProfile().objective" (change)="setRecommendationProfile({ objective: ($any($event.target).value), budget: recommendationProfile().budget, experience: recommendationProfile().experience })">
+          <option value="desarrollo">Desarrollo</option>
+          <option value="investigacion">Investigación</option>
+          <option value="productividad">Productividad</option>
+        </select>
+      </label>
+    </div>
+
+    @if (recommendedTools().length > 0) {
+      <div class="recommendations-grid">
+        @for (tool of recommendedTools(); track tool.id) {
+          <article class="recommendation-card">
+            <div class="card-header">
+              <div>
+                <p class="tool-category">{{ tool.category }}</p>
+                <h3>{{ tool.name }}</h3>
+              </div>
+              <span class="score-badge">{{ tool.matchScore }}</span>
+            </div>
+            <p class="recommendation-reason">{{ tool.reason }}</p>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="comparison-empty-state">
+        <p>{{ labels().recommendationEmpty }}</p>
+      </div>
+    }
+  </section>
+
   <section class="favorites-panel" aria-live="polite">
     <div class="comparison-header">
       <div>

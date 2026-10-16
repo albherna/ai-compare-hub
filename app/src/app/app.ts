@@ -40,6 +40,9 @@ type TranslationSet = {
   favoriteTool: string;
   removeFavorite: string;
   favoritesEmpty: string;
+  recommendations: string;
+  recommendationEmpty: string;
+  profileTitle: string;
 };
 
 const translations: Record<Language, TranslationSet> = {
@@ -70,6 +73,9 @@ const translations: Record<Language, TranslationSet> = {
     favoriteTool: 'Guardar favorito',
     removeFavorite: 'Quitar favorito',
     favoritesEmpty: 'sin favoritos guardados',
+    recommendations: 'Recomendaciones',
+    recommendationEmpty: 'sin recomendaciones disponibles',
+    profileTitle: 'Perfil de recomendación',
   },
   en: {
     eyebrow: 'AI Compare Hub',
@@ -98,6 +104,9 @@ const translations: Record<Language, TranslationSet> = {
     favoriteTool: 'Save favorite',
     removeFavorite: 'Remove favorite',
     favoritesEmpty: 'No favorites saved yet',
+    recommendations: 'Recommendations',
+    recommendationEmpty: 'No recommendations available yet',
+    profileTitle: 'Recommendation profile',
   },
 };
 
@@ -307,6 +316,11 @@ export class App {
   protected readonly language = signal<Language>('es');
   protected readonly selectedComparisonIds = signal<number[]>([]);
   protected readonly favoriteToolIds = signal<number[]>([]);
+  protected readonly recommendationProfile = signal({
+    objective: 'desarrollo',
+    budget: 'moderate',
+    experience: 'advanced',
+  });
 
   protected readonly categories = ['All', ...new Set(TOOLS.map((tool) => tool.category))];
 
@@ -338,6 +352,72 @@ export class App {
   protected readonly favoritesList = computed(() =>
     this.tools().filter((tool) => this.favoriteToolIds().includes(tool.id)),
   );
+
+  protected readonly recommendedTools = computed(() => {
+    const profile = this.recommendationProfile();
+    const objective = profile.objective.toLowerCase();
+    const budget = profile.budget.toLowerCase();
+
+    return this.tools()
+      .map((tool) => {
+        let matchScore = tool.score;
+        const matches: string[] = [];
+
+        if (objective.includes('desarrollo') || objective.includes('code') || objective.includes('dev')) {
+          if (tool.category === 'Developer' || tool.category === 'Assistant') {
+            matchScore += 12;
+            matches.push('desarrollo');
+          }
+        }
+
+        if (objective.includes('investig') || objective.includes('research')) {
+          if (tool.category === 'Research' || tool.category === 'Assistant') {
+            matchScore += 10;
+            matches.push('investigación');
+          }
+        }
+
+        if (objective.includes('productividad') || objective.includes('productivity')) {
+          if (tool.category === 'Productivity' || tool.category === 'Assistant') {
+            matchScore += 8;
+            matches.push('productividad');
+          }
+        }
+
+        if (budget === 'low') {
+          if (['Low', 'Free', 'Freemium', 'Included'].includes(tool.price)) {
+            matchScore += 8;
+            matches.push('coste bajo');
+          }
+        }
+
+        if (budget === 'moderate') {
+          if (['Moderate', 'Premium', 'Subscription', 'Included'].includes(tool.price)) {
+            matchScore += 6;
+            matches.push('equilibrio');
+          }
+        }
+
+        if (budget === 'high') {
+          if (['Premium', 'Subscription'].includes(tool.price)) {
+            matchScore += 10;
+            matches.push('máxima capacidad');
+          }
+        }
+
+        const reason = matches.length > 0
+          ? `Ideal para ${matches.join(' y ')} con buena alineación con tu caso de uso.`
+          : 'Buena opción general para tu perfil y contexto actual.';
+
+        return {
+          ...tool,
+          reason,
+          matchScore,
+        };
+      })
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 3);
+  });
 
   protected readonly resultLabel = computed(() => {
     const count = this.filteredTools().length;
@@ -457,5 +537,13 @@ export class App {
 
   protected favoriteButtonLabel(toolId: number): string {
     return this.isFavorite(toolId) ? this.labels().removeFavorite : this.labels().favoriteTool;
+  }
+
+  protected setRecommendationProfile(profile: { objective: string; budget: string; experience: string }): void {
+    this.recommendationProfile.set({
+      objective: profile.objective || 'desarrollo',
+      budget: profile.budget || 'moderate',
+      experience: profile.experience || 'advanced',
+    });
   }
 }
