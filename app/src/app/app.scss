@@ -307,7 +307,8 @@ h1 {
 }
 
 .comparison-panel,
-.favorites-panel {
+.favorites-panel,
+.benchmark-panel {
   margin-top: 2.5rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.8);
@@ -367,6 +368,47 @@ h1 {
 .comparison-table td {
   color: #1e293b;
   line-height: 1.5;
+}
+
+.benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.benchmark-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid #dfe7f5;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.benchmark-metrics {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.benchmark-metric {
+  display: grid;
+  gap: 0.25rem;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.benchmark-metric span {
+  color: #64748b;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.benchmark-metric strong {
+  color: #0f172a;
+  line-height: 1.4;
 }
 
 .favorites-grid {

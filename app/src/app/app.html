@@ -148,6 +148,50 @@
     }
   </section>
 
+  <section class="benchmark-panel" aria-live="polite">
+    <div class="comparison-header">
+      <div>
+        <p class="eyebrow">{{ labels().benchmark }}</p>
+        <h2>{{ labels().benchmark }}</h2>
+      </div>
+    </div>
+
+    @if (benchmarkTools().length > 0) {
+      <div class="benchmark-grid">
+        @for (tool of benchmarkTools(); track tool.id) {
+          <article class="benchmark-card">
+            <div class="card-header">
+              <div>
+                <p class="tool-category">{{ tool.category }}</p>
+                <h3>{{ tool.name }}</h3>
+              </div>
+              <span class="score-badge">{{ tool.benchmark?.score ?? 0 }}</span>
+            </div>
+
+            <div class="benchmark-metrics">
+              <div class="benchmark-metric">
+                <span>{{ labels().benchmarkSource }}</span>
+                <strong>{{ tool.benchmark?.source }}</strong>
+              </div>
+              <div class="benchmark-metric">
+                <span>{{ labels().benchmarkMethodology }}</span>
+                <strong>{{ tool.benchmark?.methodology }}</strong>
+              </div>
+              <div class="benchmark-metric">
+                <span>{{ labels().benchmarkConfidence }}</span>
+                <strong>{{ tool.benchmark?.confidence }}</strong>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="comparison-empty-state">
+        <p>{{ labels().benchmarkEmpty }}</p>
+      </div>
+    }
+  </section>
+
   <section class="favorites-panel" aria-live="polite">
     <div class="comparison-header">
       <div>
