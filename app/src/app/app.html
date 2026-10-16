@@ -1,0 +1,142 @@
+﻿<main class="catalog-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">{{ labels().eyebrow }}</p>
+      <h1>{{ title() }}</h1>
+    </div>
+
+    <div class="header-actions">
+      <label class="language-switch" for="language-select">
+        <span class="sr-only">Idioma</span>
+        <select id="language-select" [value]="language()" (change)="updateLanguage($event)">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+
+      <button type="button" class="secondary-button" (click)="clearFilters()">{{ labels().clearFilters }}</button>
+    </div>
+  </header>
+
+  <section class="toolbar" aria-label="Catalog search and filters">
+    <label class="search-field" for="tool-search">
+      <span class="sr-only">{{ labels().searchLabel }}</span>
+      <input
+        id="tool-search"
+        type="search"
+        [value]="searchTerm()"
+        (input)="updateSearch($event)"
+        [placeholder]="labels().searchPlaceholder"
+        [attr.aria-label]="labels().searchLabel"
+      />
+    </label>
+
+    <div class="filters" role="tablist" aria-label="Tool categories">
+      @for (category of categories; track category) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.is-active]="selectedCategory() === category"
+          (click)="selectCategory(category)"
+          [attr.aria-pressed]="selectedCategory() === category"
+        >
+          {{ category }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="results-header" aria-live="polite">
+    <h2>{{ labels().catalog }}</h2>
+    <span>{{ resultLabel() }}</span>
+  </section>
+
+  @if (filteredTools().length > 0) {
+    <section class="tool-grid" aria-label="Tool catalog results">
+      @for (tool of filteredTools(); track tool.id) {
+        <article class="tool-card" tabindex="0">
+          <div class="card-header">
+            <div>
+              <p class="tool-category">{{ tool.category }}</p>
+              <h3>{{ tool.name }}</h3>
+            </div>
+            <span class="score-badge">{{ tool.score }}</span>
+          </div>
+
+          <p class="tool-provider">{{ tool.provider }}</p>
+          <p class="tool-summary">{{ tool.summary }}</p>
+
+          <dl class="tool-meta">
+            <div>
+              <dt>{{ language() === 'en' ? 'Best for' : 'Ideal para' }}</dt>
+              <dd>{{ tool.useCase }}</dd>
+            </div>
+            <div>
+              <dt>{{ language() === 'en' ? 'Pricing' : 'Precio' }}</dt>
+              <dd>{{ tool.price }}</dd>
+            </div>
+          </dl>
+
+          <div class="card-actions">
+            <button type="button" class="primary-button">{{ labels().viewDetails }}</button>
+            <button
+              type="button"
+              class="compare-toggle"
+              [class.is-selected]="isToolSelectedForComparison(tool.id)"
+              (click)="toggleCompareTool(tool.id)"
+            >
+              {{ comparisonButtonLabel(tool.id) }}
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="empty-state" aria-live="polite">
+      <h3>{{ labels().noResultsTitle }}</h3>
+      <p>{{ labels().noResultsText }}</p>
+    </section>
+  }
+
+  <section class="comparison-panel" aria-live="polite">
+    <div class="comparison-header">
+      <div>
+        <p class="eyebrow">{{ labels().comparisonTitle }}</p>
+        <h2>{{ labels().comparisonTitle }}</h2>
+      </div>
+      <button type="button" class="secondary-button" (click)="clearComparison()">
+        {{ labels().clearComparison }}
+      </button>
+    </div>
+
+    @if (compareToolsList().length >= 2) {
+      <p class="comparison-hint">{{ labels().compareSelectionHint }}</p>
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table" aria-label="Comparison matrix">
+          <thead>
+            <tr>
+              <th>{{ labels().comparisonCriterion }}</th>
+              @for (tool of compareToolsList(); track tool.id) {
+                <th>{{ tool.name }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of comparisonRows(); track row.key) {
+              <tr>
+                <th>{{ row.label }}</th>
+                @for (value of row.values; track value) {
+                  <td>{{ value }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="comparison-empty-state">
+        <p>{{ labels().compareEmpty }}</p>
+      </div>
+    }
+  </section>
+</main>
