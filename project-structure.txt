@@ -3,6 +3,10 @@ ai-compare-hub/
 │   └── (configuración de repositorio y automatizaciones)
 ├── .specify/
 │   └── (artefactos y plantillas de especificación)
+├── .gitignore
+├── .gitmessage
+├── README.md
+├── CHANGELOG.md
 ├── specs/
 │   ├── architecture/
 │   │   └── system-design.md
@@ -12,18 +16,23 @@ ai-compare-hub/
 │   │   ├── recommendation-engine.md
 │   │   ├── benchmarks.md
 │   │   └── favorites.md
+│   ├── governance/
+│   │   ├── branching-strategy.md
+│   │   ├── release-strategy.md
+│   │   ├── commit-convention.md
+│   │   ├── pull-request-guidelines.md
+│   │   ├── definition-of-done.md
+│   │   ├── traceability-chain.md
+│   │   └── (futuras políticas de calidad y revisión)
 │   ├── ui/
 │   │   ├── pages.md
 │   │   ├── catalog-page.md
 │   │   ├── comparison-page.md
 │   │   └── benchmark-page.md
-│   ├── definition-of-done.md
 │   ├── domain-model.md
 │   ├── glossary.md
 │   ├── requirements.md
 │   ├── roadmap.md
-│   ├── traceability.md
 │   └── vision.md
 ├── project-structure.txt
-├── README.md (si se agrega más adelante)
-└── .gitignore (si se agrega más adelante)
+└── (otros ficheros del repositorio según avance)
