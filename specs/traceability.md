@@ -40,6 +40,16 @@ Favorite Toggle + Saved State
 ↓
 Favorites Tests
 
+BEN-001
+↓
+Benchmark and Ranking Overview
+↓
+Benchmark Panel
+↓
+Benchmark Metrics + Source Context
+↓
+Benchmark Tests
+
 FR-001
 ↓
 Catalog Feature

@@ -1,5 +1,12 @@
 import { Component, computed, signal } from '@angular/core';
 
+type Benchmark = {
+  score: number;
+  source: string;
+  methodology: string;
+  confidence: string;
+};
+
 type Tool = {
   id: number;
   name: string;
@@ -9,6 +16,7 @@ type Tool = {
   useCase: string;
   price: string;
   score: number;
+  benchmark?: Benchmark;
 };
 
 type Language = 'es' | 'en';
@@ -40,9 +48,11 @@ type TranslationSet = {
   favoriteTool: string;
   removeFavorite: string;
   favoritesEmpty: string;
-  recommendations: string;
-  recommendationEmpty: string;
-  profileTitle: string;
+  benchmark: string;
+  benchmarkSource: string;
+  benchmarkMethodology: string;
+  benchmarkConfidence: string;
+  benchmarkEmpty: string;
 };
 
 const translations: Record<Language, TranslationSet> = {
@@ -73,9 +83,11 @@ const translations: Record<Language, TranslationSet> = {
     favoriteTool: 'Guardar favorito',
     removeFavorite: 'Quitar favorito',
     favoritesEmpty: 'sin favoritos guardados',
-    recommendations: 'Recomendaciones',
-    recommendationEmpty: 'sin recomendaciones disponibles',
-    profileTitle: 'Perfil de recomendación',
+    benchmark: 'Benchmark',
+    benchmarkSource: 'Fuente',
+    benchmarkMethodology: 'Metodología',
+    benchmarkConfidence: 'Confianza',
+    benchmarkEmpty: 'sin benchmarks disponibles',
   },
   en: {
     eyebrow: 'AI Compare Hub',
@@ -104,9 +116,11 @@ const translations: Record<Language, TranslationSet> = {
     favoriteTool: 'Save favorite',
     removeFavorite: 'Remove favorite',
     favoritesEmpty: 'No favorites saved yet',
-    recommendations: 'Recommendations',
-    recommendationEmpty: 'No recommendations available yet',
-    profileTitle: 'Recommendation profile',
+    benchmark: 'Benchmark',
+    benchmarkSource: 'Source',
+    benchmarkMethodology: 'Methodology',
+    benchmarkConfidence: 'Confidence',
+    benchmarkEmpty: 'No benchmarks available yet',
   },
 };
 
@@ -120,6 +134,12 @@ const TOOLS: Tool[] = [
     useCase: 'Arquitectura compleja, código multi-módulo y análisis profundo',
     price: 'Premium',
     score: 99,
+    benchmark: {
+      score: 96,
+      source: 'Benchmarks internos de calidad y precisión',
+      methodology: 'Puntuación agregada por precisión, velocidad y coherencia de respuesta',
+      confidence: 'Alta',
+    },
   },
   {
     id: 2,
@@ -130,6 +150,12 @@ const TOOLS: Tool[] = [
     useCase: 'Análisis de specs, revisiones de código y soporte de producto',
     price: 'Premium',
     score: 96,
+    benchmark: {
+      score: 94,
+      source: 'Evaluación del rendimiento empresarial',
+      methodology: 'Promedio ponderado de coste, velocidad y utilidad técnica',
+      confidence: 'Alta',
+    },
   },
   {
     id: 3,
@@ -140,6 +166,12 @@ const TOOLS: Tool[] = [
     useCase: 'Resúmenes, extracción de datos y automatización ligera',
     price: 'Low',
     score: 88,
+    benchmark: {
+      score: 87,
+      source: 'Benchmark de costo-eficiencia',
+      methodology: 'Análisis de latencia y tasa de salida bajo coste de operación',
+      confidence: 'Media',
+    },
   },
   {
     id: 4,
@@ -150,6 +182,12 @@ const TOOLS: Tool[] = [
     useCase: 'Código, análisis visual, asistencia y workflows híbridos',
     price: 'Premium',
     score: 94,
+    benchmark: {
+      score: 92,
+      source: 'Benchmark de calidad multimodal',
+      methodology: 'Evaluación de respuesta visual, texto y productividad general',
+      confidence: 'Alta',
+    },
   },
   {
     id: 5,
@@ -160,6 +198,12 @@ const TOOLS: Tool[] = [
     useCase: 'Investigación profunda, programación algorítmica y análisis formal',
     price: 'Premium',
     score: 97,
+    benchmark: {
+      score: 98,
+      source: 'Rendimiento en razonamiento avanzado',
+      methodology: 'Evaluación de precisión en lógica compleja y resolución de problemas',
+      confidence: 'Alta',
+    },
   },
   {
     id: 6,
@@ -353,71 +397,9 @@ export class App {
     this.tools().filter((tool) => this.favoriteToolIds().includes(tool.id)),
   );
 
-  protected readonly recommendedTools = computed(() => {
-    const profile = this.recommendationProfile();
-    const objective = profile.objective.toLowerCase();
-    const budget = profile.budget.toLowerCase();
-
-    return this.tools()
-      .map((tool) => {
-        let matchScore = tool.score;
-        const matches: string[] = [];
-
-        if (objective.includes('desarrollo') || objective.includes('code') || objective.includes('dev')) {
-          if (tool.category === 'Developer' || tool.category === 'Assistant') {
-            matchScore += 12;
-            matches.push('desarrollo');
-          }
-        }
-
-        if (objective.includes('investig') || objective.includes('research')) {
-          if (tool.category === 'Research' || tool.category === 'Assistant') {
-            matchScore += 10;
-            matches.push('investigación');
-          }
-        }
-
-        if (objective.includes('productividad') || objective.includes('productivity')) {
-          if (tool.category === 'Productivity' || tool.category === 'Assistant') {
-            matchScore += 8;
-            matches.push('productividad');
-          }
-        }
-
-        if (budget === 'low') {
-          if (['Low', 'Free', 'Freemium', 'Included'].includes(tool.price)) {
-            matchScore += 8;
-            matches.push('coste bajo');
-          }
-        }
-
-        if (budget === 'moderate') {
-          if (['Moderate', 'Premium', 'Subscription', 'Included'].includes(tool.price)) {
-            matchScore += 6;
-            matches.push('equilibrio');
-          }
-        }
-
-        if (budget === 'high') {
-          if (['Premium', 'Subscription'].includes(tool.price)) {
-            matchScore += 10;
-            matches.push('máxima capacidad');
-          }
-        }
-
-        const reason = matches.length > 0
-          ? `Ideal para ${matches.join(' y ')} con buena alineación con tu caso de uso.`
-          : 'Buena opción general para tu perfil y contexto actual.';
-
-        return {
-          ...tool,
-          reason,
-          matchScore,
-        };
-      })
-      .sort((a, b) => b.matchScore - a.matchScore)
-      .slice(0, 3);
-  });
+  protected readonly benchmarkTools = computed(() =>
+    this.tools().filter((tool) => Boolean(tool.benchmark)).slice(0, 4),
+  );
 
   protected readonly resultLabel = computed(() => {
     const count = this.filteredTools().length;

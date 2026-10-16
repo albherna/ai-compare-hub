@@ -148,43 +148,46 @@
     }
   </section>
 
-  <section class="recommendations-panel" aria-live="polite">
+  <section class="benchmark-panel" aria-live="polite">
     <div class="comparison-header">
       <div>
-        <p class="eyebrow">{{ labels().recommendations }}</p>
-        <h2>{{ labels().profileTitle }}</h2>
+        <p class="eyebrow">{{ labels().benchmark }}</p>
+        <h2>{{ labels().benchmark }}</h2>
       </div>
     </div>
 
-    <div class="recommendation-profile">
-      <label>
-        <span>{{ labels().profileTitle }}</span>
-        <select [value]="recommendationProfile().objective" (change)="setRecommendationProfile({ objective: ($any($event.target).value), budget: recommendationProfile().budget, experience: recommendationProfile().experience })">
-          <option value="desarrollo">Desarrollo</option>
-          <option value="investigacion">Investigación</option>
-          <option value="productividad">Productividad</option>
-        </select>
-      </label>
-    </div>
-
-    @if (recommendedTools().length > 0) {
-      <div class="recommendations-grid">
-        @for (tool of recommendedTools(); track tool.id) {
-          <article class="recommendation-card">
+    @if (benchmarkTools().length > 0) {
+      <div class="benchmark-grid">
+        @for (tool of benchmarkTools(); track tool.id) {
+          <article class="benchmark-card">
             <div class="card-header">
               <div>
                 <p class="tool-category">{{ tool.category }}</p>
                 <h3>{{ tool.name }}</h3>
               </div>
-              <span class="score-badge">{{ tool.matchScore }}</span>
+              <span class="score-badge">{{ tool.benchmark?.score ?? 0 }}</span>
             </div>
-            <p class="recommendation-reason">{{ tool.reason }}</p>
+
+            <div class="benchmark-metrics">
+              <div class="benchmark-metric">
+                <span>{{ labels().benchmarkSource }}</span>
+                <strong>{{ tool.benchmark?.source }}</strong>
+              </div>
+              <div class="benchmark-metric">
+                <span>{{ labels().benchmarkMethodology }}</span>
+                <strong>{{ tool.benchmark?.methodology }}</strong>
+              </div>
+              <div class="benchmark-metric">
+                <span>{{ labels().benchmarkConfidence }}</span>
+                <strong>{{ tool.benchmark?.confidence }}</strong>
+              </div>
+            </div>
           </article>
         }
       </div>
     } @else {
       <div class="comparison-empty-state">
-        <p>{{ labels().recommendationEmpty }}</p>
+        <p>{{ labels().benchmarkEmpty }}</p>
       </div>
     }
   </section>

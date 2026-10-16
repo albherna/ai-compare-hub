@@ -15,16 +15,14 @@ describe('App', () => {
       favoritesEmpty: string;
       favoriteTool: string;
       removeFavorite: string;
-      recommendations: string;
-      recommendationEmpty: string;
-      profileTitle: string;
+      benchmark: string;
+      benchmarkEmpty: string;
     };
     tools: () => Array<{ name: string; category: string; useCase: string; price: string; score: number }>;
     filteredTools: () => Array<{ category: string; name: string; id: number }>;
     compareToolsList: () => Array<{ id: number; name: string }>;
     favoritesList: () => Array<{ id: number; name: string }>;
-    recommendedTools: () => Array<{ id: number; name: string; reason: string; matchScore: number }>;
-    setRecommendationProfile: (profile: { objective: string; budget: string; experience: string }) => void;
+    benchmarkTools: () => Array<{ id: number; name: string; benchmark: { score: number; source: string; methodology: string; confidence: string } }>;
     searchTerm: { set: (value: string) => void };
     updateLanguage: (event: { target: { value: string } }) => void;
     selectCategory: (category: string) => void;
@@ -49,16 +47,14 @@ describe('App', () => {
         favoritesEmpty: string;
         favoriteTool: string;
         removeFavorite: string;
-        recommendations: string;
-        recommendationEmpty: string;
-        profileTitle: string;
+        benchmark: string;
+        benchmarkEmpty: string;
       };
       tools: () => Array<{ name: string; category: string; useCase: string }>; 
       filteredTools: () => Array<{ category: string; name: string }>; 
       compareToolsList: () => Array<{ id: number; name: string }>;
       favoritesList: () => Array<{ id: number; name: string }>;
-      recommendedTools: () => Array<{ id: number; name: string; reason: string; matchScore: number }>;
-      setRecommendationProfile: (profile: { objective: string; budget: string; experience: string }) => void;
+      benchmarkTools: () => Array<{ id: number; name: string; benchmark: { score: number; source: string; methodology: string; confidence: string } }>;
       searchTerm: { set: (value: string) => void };
       updateLanguage: (event: { target: { value: string } }) => void;
       selectCategory: (category: string) => void;
@@ -136,20 +132,14 @@ describe('App', () => {
     expect(app.labels().favoritesEmpty).toContain('sin favoritos');
   });
 
-  it('should recommend tools based on objective and budget', () => {
-    app.setRecommendationProfile({
-      objective: 'desarrollo',
-      budget: 'moderate',
-      experience: 'advanced',
-    });
-
-    expect(app.recommendedTools().length).toBeGreaterThan(0);
-    expect(app.recommendedTools()[0].reason.toLowerCase()).toContain('desarrollo');
-    expect(app.recommendedTools()[0].matchScore).toBeGreaterThan(0);
+  it('should expose benchmark data with methodology and source for ranked tools', () => {
+    expect(app.benchmarkTools().length).toBeGreaterThan(0);
+    expect(app.benchmarkTools().every((tool) => tool.benchmark?.source)).toBe(true);
+    expect(app.labels().benchmark).toContain('Benchmark');
   });
 
-  it('should keep a recommendation panel title and empty-state label available', () => {
-    expect(app.labels().recommendations).toContain('Recomendaciones');
-    expect(app.labels().recommendationEmpty).toContain('sin recomendaciones');
+  it('should show an empty benchmark message when no data is available', () => {
+    expect(app.benchmarkTools().some((tool) => tool.id === 99)).toBe(false);
+    expect(app.labels().benchmarkEmpty).toContain('sin benchmarks');
   });
 });
