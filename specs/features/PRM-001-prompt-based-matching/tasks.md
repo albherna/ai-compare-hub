@@ -104,7 +104,7 @@
 - [X] T027 [US2] Diferenciar benchmark verificado de estimación editorial en razones/evidencias en `app/src/app/prompt-matcher.ts` y `app/src/app/app.ts`.
 - [X] T028 [US1] Detectar umbral de precisión solo cuando el porcentaje está ligado a términos de calidad y añadir caso negativo en `app/src/app/prompt-matcher.ts` y `app/src/app/prompt-matcher.spec.ts`.
 - [X] T029 [US2] Mostrar criterios detectados y advertencias de evidencia insuficiente en `app/src/app/app.html` y `app/src/app/app.scss`.
-- [ ] T030 Ejecutar tests/build oficiales, revisar escenarios comparativos con teclado y validar los artefactos PRM-001.
+- [X] T030 Ejecutar tests/build oficiales, revisar escenarios comparativos con teclado y validar los artefactos PRM-001.
 
 ## Dependencies & Execution Order
 

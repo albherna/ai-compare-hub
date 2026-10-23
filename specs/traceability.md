@@ -49,6 +49,15 @@ Prompt Matcher + Recommendation Results
 Prompt Analysis, Decision Axes, and Evidence Validation
 ↓
 Prompt Matching Tests
+BEN-001
+↓
+Benchmark and Ranking Overview
+↓
+Benchmark Panel
+↓
+Benchmark Metrics + Source Context
+↓
+Benchmark Tests
 
 FR-001
 ↓

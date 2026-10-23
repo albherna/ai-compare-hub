@@ -1,6 +1,13 @@
 import { Component, computed, signal } from '@angular/core';
 import { matchPrompt, type DecisionAxes, type PromptMatchResult } from './prompt-matcher';
 
+type Benchmark = {
+  score: number;
+  source: string;
+  methodology: string;
+  confidence: string;
+};
+
 type Tool = {
   id: number;
   name: string;
@@ -11,6 +18,7 @@ type Tool = {
   price: string;
   score: number;
   decisionAxes?: DecisionAxes;
+  benchmark?: Benchmark;
 };
 
 type Language = 'es' | 'en';
@@ -67,6 +75,11 @@ type TranslationSet = {
   promptCompare: string;
   promptCompareAdded: string;
   promptUpdateResults: string;
+  benchmark: string;
+  benchmarkSource: string;
+  benchmarkMethodology: string;
+  benchmarkConfidence: string;
+  benchmarkEmpty: string;
 };
 
 const translations: Record<Language, TranslationSet> = {
@@ -122,6 +135,11 @@ const translations: Record<Language, TranslationSet> = {
     promptCompare: 'Añadir a comparación',
     promptCompareAdded: 'En comparación',
     promptUpdateResults: 'Actualizar recomendaciones',
+    benchmark: 'Benchmark',
+    benchmarkSource: 'Fuente',
+    benchmarkMethodology: 'Metodología',
+    benchmarkConfidence: 'Confianza',
+    benchmarkEmpty: 'sin benchmarks disponibles',
   },
   en: {
     eyebrow: 'AI Compare Hub',
@@ -175,6 +193,11 @@ const translations: Record<Language, TranslationSet> = {
     promptCompare: 'Add to comparison',
     promptCompareAdded: 'In comparison',
     promptUpdateResults: 'Update recommendations',
+    benchmark: 'Benchmark',
+    benchmarkSource: 'Source',
+    benchmarkMethodology: 'Methodology',
+    benchmarkConfidence: 'Confidence',
+    benchmarkEmpty: 'No benchmarks available yet',
   },
 };
 
@@ -189,6 +212,12 @@ const TOOLS: Tool[] = [
     price: 'Premium',
     score: 99,
     decisionAxes: { capability: 'advanced', cost: 'high', latency: 'slow', privacy: 'cloud', source: 'editorial-estimate' },
+    benchmark: {
+      score: 96,
+      source: 'Benchmarks internos de calidad y precisión',
+      methodology: 'Puntuación agregada por precisión, velocidad y coherencia de respuesta',
+      confidence: 'Alta',
+    },
   },
   {
     id: 2,
@@ -200,6 +229,12 @@ const TOOLS: Tool[] = [
     price: 'Premium',
     score: 96,
     decisionAxes: { capability: 'advanced', cost: 'moderate', latency: 'balanced', privacy: 'cloud', contextTokens: 200_000, source: 'editorial-estimate' },
+    benchmark: {
+      score: 94,
+      source: 'Evaluación del rendimiento empresarial',
+      methodology: 'Promedio ponderado de coste, velocidad y utilidad técnica',
+      confidence: 'Alta',
+    },
   },
   {
     id: 3,
@@ -211,6 +246,12 @@ const TOOLS: Tool[] = [
     price: 'Low',
     score: 88,
     decisionAxes: { capability: 'routine', cost: 'low', latency: 'fast', privacy: 'cloud', source: 'editorial-estimate' },
+    benchmark: {
+      score: 87,
+      source: 'Benchmark de costo-eficiencia',
+      methodology: 'Análisis de latencia y tasa de salida bajo coste de operación',
+      confidence: 'Media',
+    },
   },
   {
     id: 4,
@@ -222,6 +263,12 @@ const TOOLS: Tool[] = [
     price: 'Premium',
     score: 94,
     decisionAxes: { capability: 'balanced', cost: 'moderate', latency: 'balanced', privacy: 'cloud', contextTokens: 128_000, source: 'editorial-estimate' },
+    benchmark: {
+      score: 92,
+      source: 'Benchmark de calidad multimodal',
+      methodology: 'Evaluación de respuesta visual, texto y productividad general',
+      confidence: 'Alta',
+    },
   },
   {
     id: 5,
@@ -233,6 +280,12 @@ const TOOLS: Tool[] = [
     price: 'Premium',
     score: 97,
     decisionAxes: { capability: 'advanced', cost: 'high', latency: 'slow', privacy: 'cloud', source: 'editorial-estimate' },
+    benchmark: {
+      score: 98,
+      source: 'Rendimiento en razonamiento avanzado',
+      methodology: 'Evaluación de precisión en lógica compleja y resolución de problemas',
+      confidence: 'Alta',
+    },
   },
   {
     id: 6,
@@ -436,6 +489,10 @@ export class App {
     this.tools().filter((tool) => this.favoriteToolIds().includes(tool.id)),
   );
 
+  protected readonly benchmarkTools = computed(() =>
+    this.tools().filter((tool) => Boolean(tool.benchmark)).slice(0, 4),
+  );
+
   protected readonly recommendedTools = computed(() => {
     const profile = this.recommendationProfile();
     const objective = profile.objective.toLowerCase();
@@ -467,38 +524,24 @@ export class App {
           }
         }
 
-        if (budget === 'low') {
-          if (['Low', 'Free', 'Freemium', 'Included'].includes(tool.price)) {
-            matchScore += 8;
-            matches.push('coste bajo');
-          }
-        }
-
-        if (budget === 'moderate') {
-          if (['Moderate', 'Premium', 'Subscription', 'Included'].includes(tool.price)) {
-            matchScore += 6;
-            matches.push('equilibrio');
-          }
-        }
-
-        if (budget === 'high') {
-          if (['Premium', 'Subscription'].includes(tool.price)) {
-            matchScore += 10;
-            matches.push('máxima capacidad');
-          }
+        if (budget === 'low' && ['Low', 'Free', 'Freemium', 'Included'].includes(tool.price)) {
+          matchScore += 8;
+          matches.push('coste bajo');
+        } else if (budget === 'moderate' && ['Moderate', 'Premium', 'Subscription', 'Included'].includes(tool.price)) {
+          matchScore += 6;
+          matches.push('equilibrio');
+        } else if (budget === 'high' && ['Premium', 'Subscription'].includes(tool.price)) {
+          matchScore += 10;
+          matches.push('máxima capacidad');
         }
 
         const reason = matches.length > 0
           ? `Ideal para ${matches.join(' y ')} con buena alineación con tu caso de uso.`
           : 'Buena opción general para tu perfil y contexto actual.';
 
-        return {
-          ...tool,
-          reason,
-          matchScore,
-        };
+        return { ...tool, reason, matchScore };
       })
-      .sort((a, b) => b.matchScore - a.matchScore)
+      .sort((left, right) => right.matchScore - left.matchScore)
       .slice(0, 3);
   });
 
