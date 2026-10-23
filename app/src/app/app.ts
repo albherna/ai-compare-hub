@@ -1,4 +1,5 @@
 import { Component, computed, signal } from '@angular/core';
+import { matchPrompt, type DecisionAxes, type PromptMatchResult } from './prompt-matcher';
 
 type Tool = {
   id: number;
@@ -9,6 +10,7 @@ type Tool = {
   useCase: string;
   price: string;
   score: number;
+  decisionAxes?: DecisionAxes;
 };
 
 type Language = 'es' | 'en';
@@ -32,6 +34,8 @@ type TranslationSet = {
   rowPrice: string;
   rowCapability: string;
   rowSpeed: string;
+  rowContext: string;
+  rowPrivacy: string;
   rowUseCase: string;
   rowIntegration: string;
   rowStrengths: string;
@@ -43,6 +47,26 @@ type TranslationSet = {
   recommendations: string;
   recommendationEmpty: string;
   profileTitle: string;
+  promptTitle: string;
+  promptDescription: string;
+  promptLabel: string;
+  promptPlaceholder: string;
+  analyzePrompt: string;
+  promptIntentLabel: string;
+  promptResults: string;
+  promptCriteria: string;
+  promptAnalysisNote: string;
+  promptNoResults: string;
+  promptEmpty: string;
+  promptTooLong: string;
+  promptPrivacyNotice: string;
+  promptReasons: string;
+  promptTradeoffs: string;
+  promptFit: string;
+  promptFitNote: string;
+  promptCompare: string;
+  promptCompareAdded: string;
+  promptUpdateResults: string;
 };
 
 const translations: Record<Language, TranslationSet> = {
@@ -65,6 +89,8 @@ const translations: Record<Language, TranslationSet> = {
     rowPrice: 'Precio',
     rowCapability: 'Capacidad',
     rowSpeed: 'Velocidad',
+    rowContext: 'Ventana de contexto',
+    rowPrivacy: 'Privacidad y despliegue',
     rowUseCase: 'Caso de uso',
     rowIntegration: 'Integración',
     rowStrengths: 'Fortalezas',
@@ -76,6 +102,26 @@ const translations: Record<Language, TranslationSet> = {
     recommendations: 'Recomendaciones',
     recommendationEmpty: 'sin recomendaciones disponibles',
     profileTitle: 'Perfil de recomendación',
+    promptTitle: 'Encuentra la IA adecuada',
+    promptDescription: 'Describe lo que quieres hacer y descubre qué modelos del catálogo encajan mejor.',
+    promptLabel: 'Describe tu tarea o pega un prompt',
+    promptPlaceholder: 'Ej.: Necesito revisar un codebase grande y localizar errores complejos.',
+    analyzePrompt: 'Analizar tarea',
+    promptIntentLabel: 'Intención detectada (puedes ajustarla)',
+    promptResults: 'Modelos y agentes recomendados',
+    promptCriteria: 'Ejes considerados',
+    promptAnalysisNote: 'Los valores de coste, latencia, contexto y privacidad son estimaciones editoriales, no benchmarks verificados.',
+    promptNoResults: 'No encontramos un ajuste claro. Prueba a describir el objetivo con otras palabras.',
+    promptEmpty: 'Escribe una tarea para empezar.',
+    promptTooLong: 'La consulta no puede superar los 4.000 caracteres.',
+    promptPrivacyNotice: 'El análisis se realiza en esta página. Tu prompt no se guarda ni se envía a los proveedores de las herramientas.',
+    promptReasons: 'Por qué encaja',
+    promptTradeoffs: 'A tener en cuenta',
+    promptFit: 'Ajuste',
+    promptFitNote: 'Estimación basada en la intención y el catálogo; no es una probabilidad ni una prueba directa del modelo.',
+    promptCompare: 'Añadir a comparación',
+    promptCompareAdded: 'En comparación',
+    promptUpdateResults: 'Actualizar recomendaciones',
   },
   en: {
     eyebrow: 'AI Compare Hub',
@@ -96,6 +142,8 @@ const translations: Record<Language, TranslationSet> = {
     rowPrice: 'Pricing',
     rowCapability: 'Capability',
     rowSpeed: 'Speed',
+    rowContext: 'Context window',
+    rowPrivacy: 'Privacy and deployment',
     rowUseCase: 'Use case',
     rowIntegration: 'Integration',
     rowStrengths: 'Strengths',
@@ -107,6 +155,26 @@ const translations: Record<Language, TranslationSet> = {
     recommendations: 'Recommendations',
     recommendationEmpty: 'No recommendations available yet',
     profileTitle: 'Recommendation profile',
+    promptTitle: 'Find the right AI',
+    promptDescription: 'Describe what you want to do to find the catalog models that best fit your task.',
+    promptLabel: 'Describe your task or paste a prompt',
+    promptPlaceholder: 'Example: I need to review a large codebase and find complex bugs.',
+    analyzePrompt: 'Analyze task',
+    promptIntentLabel: 'Detected intent (you can edit it)',
+    promptResults: 'Recommended models and agents',
+    promptCriteria: 'Decision criteria considered',
+    promptAnalysisNote: 'Cost, latency, context and privacy values are editorial estimates, not verified benchmarks.',
+    promptNoResults: 'We could not find a clear match. Try describing your goal in different words.',
+    promptEmpty: 'Enter a task to get started.',
+    promptTooLong: 'The query cannot exceed 4,000 characters.',
+    promptPrivacyNotice: 'Analysis runs on this page. Your prompt is not stored or sent to tool providers.',
+    promptReasons: 'Why it fits',
+    promptTradeoffs: 'Considerations',
+    promptFit: 'Fit',
+    promptFitNote: 'Estimate based on intent and catalog data; it is not a probability or a direct model test.',
+    promptCompare: 'Add to comparison',
+    promptCompareAdded: 'In comparison',
+    promptUpdateResults: 'Update recommendations',
   },
 };
 
@@ -120,6 +188,7 @@ const TOOLS: Tool[] = [
     useCase: 'Arquitectura compleja, código multi-módulo y análisis profundo',
     price: 'Premium',
     score: 99,
+    decisionAxes: { capability: 'advanced', cost: 'high', latency: 'slow', privacy: 'cloud', source: 'editorial-estimate' },
   },
   {
     id: 2,
@@ -130,6 +199,7 @@ const TOOLS: Tool[] = [
     useCase: 'Análisis de specs, revisiones de código y soporte de producto',
     price: 'Premium',
     score: 96,
+    decisionAxes: { capability: 'advanced', cost: 'moderate', latency: 'balanced', privacy: 'cloud', contextTokens: 200_000, source: 'editorial-estimate' },
   },
   {
     id: 3,
@@ -140,6 +210,7 @@ const TOOLS: Tool[] = [
     useCase: 'Resúmenes, extracción de datos y automatización ligera',
     price: 'Low',
     score: 88,
+    decisionAxes: { capability: 'routine', cost: 'low', latency: 'fast', privacy: 'cloud', source: 'editorial-estimate' },
   },
   {
     id: 4,
@@ -150,6 +221,7 @@ const TOOLS: Tool[] = [
     useCase: 'Código, análisis visual, asistencia y workflows híbridos',
     price: 'Premium',
     score: 94,
+    decisionAxes: { capability: 'balanced', cost: 'moderate', latency: 'balanced', privacy: 'cloud', contextTokens: 128_000, source: 'editorial-estimate' },
   },
   {
     id: 5,
@@ -160,6 +232,7 @@ const TOOLS: Tool[] = [
     useCase: 'Investigación profunda, programación algorítmica y análisis formal',
     price: 'Premium',
     score: 97,
+    decisionAxes: { capability: 'advanced', cost: 'high', latency: 'slow', privacy: 'cloud', source: 'editorial-estimate' },
   },
   {
     id: 6,
@@ -180,6 +253,7 @@ const TOOLS: Tool[] = [
     useCase: 'Documentación grande, auditoría de repositorios y análisis de contexto largo',
     price: 'Premium',
     score: 95,
+    decisionAxes: { capability: 'advanced', cost: 'moderate', latency: 'balanced', privacy: 'cloud', contextTokens: 1_000_000, source: 'editorial-estimate' },
   },
   {
     id: 8,
@@ -190,6 +264,7 @@ const TOOLS: Tool[] = [
     useCase: 'Clasificación en tiempo real, interfaces reactivas y atención rápida',
     price: 'Low',
     score: 89,
+    decisionAxes: { capability: 'routine', cost: 'low', latency: 'fast', privacy: 'cloud', source: 'editorial-estimate' },
   },
   {
     id: 9,
@@ -230,6 +305,7 @@ const TOOLS: Tool[] = [
     useCase: 'Procesos locales, privacidad y despliegue en infra propia',
     price: 'Free',
     score: 84,
+    decisionAxes: { capability: 'balanced', cost: 'low', privacy: 'local', source: 'editorial-estimate' },
   },
   {
     id: 13,
@@ -240,6 +316,7 @@ const TOOLS: Tool[] = [
     useCase: 'Casos locales, clasificación y automatización sin salir del entorno',
     price: 'Free',
     score: 82,
+    decisionAxes: { capability: 'routine', cost: 'low', privacy: 'local', source: 'editorial-estimate' },
   },
   {
     id: 14,
@@ -321,10 +398,16 @@ export class App {
     budget: 'moderate',
     experience: 'advanced',
   });
+  protected readonly promptText = signal('');
+  protected readonly promptIntentOverride = signal('');
+  protected readonly promptIntentEdited = signal(false);
+  protected readonly promptResult = signal<PromptMatchResult | null>(null);
+  protected readonly promptInputError = signal('');
 
   protected readonly categories = ['All', ...new Set(TOOLS.map((tool) => tool.category))];
 
   protected readonly labels = computed(() => translations[this.language()]);
+  protected readonly promptMatches = computed(() => this.promptResult()?.matches ?? []);
 
   protected readonly filteredTools = computed(() => {
     const normalize = (value: string) =>
@@ -437,6 +520,8 @@ export class App {
       { key: 'price', label: labels.rowPrice },
       { key: 'capability', label: labels.rowCapability },
       { key: 'speed', label: labels.rowSpeed },
+      { key: 'context', label: labels.rowContext },
+      { key: 'privacy', label: labels.rowPrivacy },
       { key: 'useCase', label: labels.rowUseCase },
       { key: 'integration', label: labels.rowIntegration },
       { key: 'strengths', label: labels.rowStrengths },
@@ -452,6 +537,47 @@ export class App {
   protected updateSearch(event: Event): void {
     const value = (event.target as HTMLInputElement | null)?.value ?? '';
     this.searchTerm.set(value);
+  }
+
+  protected updatePromptText(event: Event): void {
+    const value = (event.target as HTMLTextAreaElement | null)?.value ?? '';
+    this.promptText.set(value);
+    this.promptIntentOverride.set('');
+    this.promptIntentEdited.set(false);
+    this.promptResult.set(null);
+    this.promptInputError.set('');
+  }
+
+  protected updatePromptIntent(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? '';
+    this.promptIntentOverride.set(value);
+    this.promptIntentEdited.set(true);
+  }
+
+  protected analyzePrompt(event?: Event): void {
+    event?.preventDefault();
+    const prompt = this.promptText().trim();
+
+    if (!prompt) {
+      this.promptResult.set(null);
+      this.promptInputError.set(this.labels().promptEmpty);
+      return;
+    }
+
+    if (prompt.length > 4000) {
+      this.promptResult.set(null);
+      this.promptInputError.set(this.labels().promptTooLong);
+      return;
+    }
+
+    const refinedIntent = this.promptIntentEdited() ? this.promptIntentOverride() : '';
+    const result = matchPrompt(prompt, this.tools(), refinedIntent);
+    this.promptResult.set(result);
+    this.promptInputError.set('');
+
+    if (!this.promptIntentOverride() && result.taskTypes.length > 0) {
+      this.promptIntentOverride.set(result.intent);
+    }
   }
 
   protected selectCategory(category: string): void {
@@ -500,9 +626,22 @@ export class App {
       case 'price':
         return tool.price;
       case 'capability':
-        return tool.score >= 95 ? 'Alta' : tool.score >= 88 ? 'Media' : 'Baja';
+        if (!tool.decisionAxes?.capability) return this.labels().unavailable;
+        return this.language() === 'en'
+          ? tool.decisionAxes.capability
+          : ({ routine: 'Rutinaria', balanced: 'Equilibrada', advanced: 'Avanzada' } as const)[tool.decisionAxes.capability];
       case 'speed':
-        return tool.score >= 92 ? 'Alta' : tool.score >= 85 ? 'Media' : 'Baja';
+        return tool.decisionAxes?.latency
+          ? `${tool.decisionAxes.latency} (${this.getDecisionSourceLabel(tool)})`
+          : this.labels().unavailable;
+      case 'context':
+        return tool.decisionAxes?.contextTokens
+          ? `${tool.decisionAxes.contextTokens.toLocaleString(this.language() === 'en' ? 'en-US' : 'es-ES')} tokens (${this.getDecisionSourceLabel(tool)})`
+          : this.labels().unavailable;
+      case 'privacy':
+        return tool.decisionAxes?.privacy
+          ? `${tool.decisionAxes.privacy} (${this.getDecisionSourceLabel(tool)})`
+          : this.labels().unavailable;
       case 'useCase':
         return tool.useCase;
       case 'integration':
@@ -514,6 +653,14 @@ export class App {
       default:
         return this.labels().unavailable;
     }
+  }
+
+  protected getDecisionSourceLabel(tool: Tool): string {
+    if (this.language() === 'en') {
+      return tool.decisionAxes?.source === 'verified-benchmark' ? 'verified benchmark' : 'editorial estimate';
+    }
+
+    return tool.decisionAxes?.source === 'verified-benchmark' ? 'benchmark verificado' : 'estimación editorial';
   }
 
   protected comparisonButtonLabel(toolId: number): string {

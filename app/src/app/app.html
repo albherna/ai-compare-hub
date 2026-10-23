@@ -46,6 +46,118 @@
     </div>
   </section>
 
+  <section class="prompt-matcher-panel" aria-labelledby="prompt-matcher-title">
+    <div class="prompt-matcher-heading">
+      <div>
+        <p class="eyebrow">{{ labels().promptResults }}</p>
+        <h2 id="prompt-matcher-title">{{ labels().promptTitle }}</h2>
+        <p class="prompt-description">{{ labels().promptDescription }}</p>
+      </div>
+    </div>
+
+    <form class="prompt-matcher-form" (submit)="analyzePrompt($event)">
+      <label for="prompt-entry">{{ labels().promptLabel }}</label>
+      <textarea
+        id="prompt-entry"
+        rows="4"
+        maxlength="4000"
+        [value]="promptText()"
+        [placeholder]="labels().promptPlaceholder"
+        (input)="updatePromptText($event)"
+        [attr.aria-describedby]="promptInputError() ? 'prompt-privacy prompt-input-error' : 'prompt-privacy'"
+      ></textarea>
+      <div class="prompt-form-footer">
+        <button type="submit" class="primary-button">{{ labels().analyzePrompt }}</button>
+        <span>{{ promptText().length }}/4000</span>
+      </div>
+      <p id="prompt-privacy" class="privacy-notice">{{ labels().promptPrivacyNotice }}</p>
+      @if (promptInputError()) {
+        <p id="prompt-input-error" class="prompt-error" role="alert">{{ promptInputError() }}</p>
+      }
+    </form>
+
+    @if (promptResult(); as result) {
+      <section class="prompt-results" aria-live="polite" aria-labelledby="prompt-results-title">
+        @if (result.status === 'needs-refinement') {
+          <p class="prompt-empty-state">{{ labels().promptNoResults }}</p>
+        } @else {
+          <div class="prompt-result-heading">
+            <div>
+              <h3 id="prompt-results-title">{{ labels().promptResults }}</h3>
+              <p>{{ result.intent }}</p>
+            </div>
+            <label class="prompt-intent-field" for="prompt-intent">
+              <span>{{ labels().promptIntentLabel }}</span>
+              <input
+                id="prompt-intent"
+                type="text"
+                maxlength="240"
+                [value]="promptIntentOverride()"
+                (input)="updatePromptIntent($event)"
+              />
+            </label>
+          </div>
+          @if (result.constraints.length > 0) {
+            <div class="prompt-criteria" aria-label="{{ labels().promptCriteria }}">
+              <strong>{{ labels().promptCriteria }}</strong>
+              <ul>
+                @for (constraint of result.constraints; track constraint) {
+                  <li>{{ constraint }}</li>
+                }
+              </ul>
+            </div>
+          }
+          @if (result.analysisNotes.length > 0) {
+            <p class="prompt-analysis-note" role="note">{{ result.analysisNotes.join(' ') }}</p>
+          }
+          <p class="prompt-analysis-note">{{ labels().promptAnalysisNote }}</p>
+          <p class="prompt-fit-note">{{ labels().promptFitNote }}</p>
+          <button type="button" class="secondary-button prompt-update-button" (click)="analyzePrompt()">
+            {{ labels().promptUpdateResults }}
+          </button>
+
+          <div class="prompt-match-list">
+            @for (match of promptMatches(); track match.tool.id) {
+              <article class="prompt-match-item">
+                <div class="prompt-match-header">
+                  <div>
+                    <p class="tool-category">{{ match.tool.category }} · {{ match.tool.provider }}</p>
+                    <h4>{{ match.tool.name }}</h4>
+                  </div>
+                  <span class="score-badge" [attr.aria-label]="labels().promptFit + ': ' + match.fitScore">{{ match.fitScore }}</span>
+                </div>
+                <p class="tool-summary">{{ match.tool.summary }}</p>
+                <h5>{{ labels().promptReasons }}</h5>
+                <ul>
+                  @for (reason of match.reasons; track reason) {
+                    <li>{{ reason }}</li>
+                  }
+                </ul>
+                @if (match.tradeoffs.length > 0) {
+                  <h5>{{ labels().promptTradeoffs }}</h5>
+                  <ul>
+                    @for (tradeoff of match.tradeoffs; track tradeoff) {
+                      <li>{{ tradeoff }}</li>
+                    }
+                  </ul>
+                }
+                <button
+                  type="button"
+                  class="compare-toggle"
+                  [class.is-selected]="isToolSelectedForComparison(match.tool.id)"
+                  [attr.aria-pressed]="isToolSelectedForComparison(match.tool.id)"
+                  (click)="toggleCompareTool(match.tool.id)"
+                >
+                  {{ isToolSelectedForComparison(match.tool.id) ? labels().promptCompareAdded : labels().promptCompare }}
+                </button>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+  </section>
+
   <section class="results-header" aria-live="polite">
     <h2>{{ labels().catalog }}</h2>
     <span>{{ resultLabel() }}</span>

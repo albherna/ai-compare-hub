@@ -125,6 +125,7 @@ Escalar la plataforma como referencia comparativa de IA con mejor experiencia de
 
 - Expansión de categorías e inclusión de nuevas familias de herramientas IA.
 - Recomendaciones más avanzadas por intención y contexto.
+- Recomendación de agentes o modelos a partir de un prompt introducido por el usuario (PRM-001).
 - Analítica de comportamiento para personalización y evolución del contenido.
 - Mejoras de SEO y contenido de autoridad.
 - Revisión de rendimiento, seguridad y cumplimiento.
@@ -132,6 +133,7 @@ Escalar la plataforma como referencia comparativa de IA con mejor experiencia de
 ### Entregables clave
 
 - Roadmap de contenido y expansión de catálogo.
+- Flujo de análisis de prompt con recomendaciones explicables y alternativas del catálogo.
 - Mejora continua de recomendaciones basadas en comportamiento de usuario.
 - Nuevos insights y comparativas para categorías emergentes.
 
@@ -196,5 +198,12 @@ Implementar:
 Implementar:
 - User Profile
 - Recommendation Logic
+
+#### Sprint 6 — Prompt-Based Matching (PRM-001)
+Implementar:
+- Prompt intent and requirement summary
+- Catalog-based agent/model matching
+- Explainable recommendations, alternatives, and refinement flow
+- Privacy and non-execution safeguards for submitted prompts
 
 Este orden permite entregar valor desde el primer sprint con foco en la decisión del usuario, y ofrece una base sólida para la evolución posterior del producto.

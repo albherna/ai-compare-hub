@@ -36,6 +36,21 @@
 - **FR-024**: El sistema DEBE permitir la gestión de contenido actualizado para catálogo y benchmarks.
 - **FR-025**: El sistema DEBE distinguir entre herramientas “visión general”, “premium” y “freemium” cuando corresponda.
 
+### Requisitos de recomendación a partir de un prompt
+
+- **FR-026**: El sistema DEBE permitir que el usuario introduzca un prompt en lenguaje natural para solicitar una recomendación de agente o modelo de IA.
+- **FR-027**: El sistema DEBE identificar y presentar la intención, el tipo de tarea y los requisitos relevantes detectados en el prompt.
+- **FR-028**: El sistema DEBE recomendar y ordenar agentes o modelos registrados en el catálogo según su adecuación a los requisitos detectados.
+- **FR-029**: El sistema DEBE explicar la adecuación de cada candidato vinculando los requisitos con capacidades o información disponible en el catálogo.
+- **FR-030**: El sistema DEBE presentar alternativas y sus trade-offs, y distinguir datos verificados, estimaciones y recomendaciones editoriales.
+- **FR-031**: El sistema DEBE permitir al usuario corregir la intención o los requisitos detectados y volver a solicitar recomendaciones.
+- **FR-032**: Cuando el prompt sea ambiguo, no esté cubierto por el catálogo o no haya datos suficientes, el sistema DEBE comunicar la limitación y permitir refinar la consulta sin afirmar un ganador sin fundamento.
+- **FR-033**: El sistema DEBE permitir continuar desde una recomendación al detalle de una herramienta o a una comparación entre candidatos.
+- **FR-034**: El análisis del prompt DEBE limitarse a la recomendación: el sistema no DEBE ejecutar el prompt contra las herramientas candidatas ni enviarles el texto.
+- **FR-035**: El sistema DEBE considerar capacidad frente a coste, latencia, privacidad/despliegue, ventana de contexto y etapa de uso (desarrollo o producción) cuando el prompt lo indique y exista metadata aplicable.
+- **FR-036**: El sistema DEBE etiquetar como estimación editorial los perfiles comparativos no respaldados por un benchmark verificable y DEBE señalar como desconocidos los ejes sin datos.
+- **FR-037**: Si el usuario define un umbral de calidad, el sistema NO DEBE garantizarlo sin resultados de evaluación verificables y DEBE recomendar validación con datos representativos.
+
 ## 2. Non Functional Requirements
 
 - **NFR-001**: El sistema DEBE responder a búsquedas y consultas de catálogo en menos de 3 segundos en condiciones normales de uso.
@@ -48,6 +63,7 @@
 - **NFR-008**: El producto DEBE seguir buenas prácticas de observabilidad para medir rendimiento, uso y errores.
 - **NFR-009**: El sistema DEBE ofrecer trazabilidad y registros básicos de actividad de contenido y consultas relevantes.
 - **NFR-010**: La plataforma DEBE estar preparada para cumplir requisitos de internacionalización básica en futuras expansiones.
+- **NFR-011**: En condiciones normales, el 95% de las consultas de recomendación basadas en prompt DEBE producir resultados o una explicación accionable en un máximo de 10 segundos.
 
 ## 3. Security Requirements
 
@@ -60,6 +76,7 @@
 - **SEC-007**: El sistema DEBE segmentar y aislar información sensible por perfil y tipo de dato.
 - **SEC-008**: La plataforma DEBE contar con políticas de seguridad para proteger conexiones y transferencias de contenido vía HTTPS.
 - **SEC-009**: El sistema DEBE permitir auditoría básica de cambios de contenido crítico y configuración relevante.
+- **SEC-010**: El sistema NO DEBE conservar el prompt tras la consulta ni compartirlo con proveedores de herramientas recomendadas sin consentimiento explícito del usuario.
 
 ## 4. Accessibility Requirements
 
