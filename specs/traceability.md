@@ -40,6 +40,15 @@ Favorite Toggle + Saved State
 ↓
 Favorites Tests
 
+FR-026..FR-037, NFR-011, SEC-010
+↓
+PRM-001 — Prompt-Based Matching
+↓
+Prompt Matcher + Recommendation Results
+↓
+Prompt Analysis, Decision Axes, and Evidence Validation
+↓
+Prompt Matching Tests
 BEN-001
 ↓
 Benchmark and Ranking Overview

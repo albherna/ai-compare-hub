@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { App } from './app';
+import type { PromptMatchResult } from './prompt-matcher';
 
 describe('App', () => {
   let app: App & {
@@ -15,53 +16,41 @@ describe('App', () => {
       favoritesEmpty: string;
       favoriteTool: string;
       removeFavorite: string;
+      recommendations: string;
+      recommendationEmpty: string;
+      profileTitle: string;
+      promptTitle: string;
+      promptPrivacyNotice: string;
+      promptFitNote: string;
       benchmark: string;
       benchmarkEmpty: string;
     };
     tools: () => Array<{ name: string; category: string; useCase: string; price: string; score: number }>;
     filteredTools: () => Array<{ category: string; name: string; id: number }>;
     compareToolsList: () => Array<{ id: number; name: string }>;
+    comparisonRows: () => Array<{ key: string; values: string[] }>;
     favoritesList: () => Array<{ id: number; name: string }>;
     benchmarkTools: () => Array<{ id: number; name: string; benchmark: { score: number; source: string; methodology: string; confidence: string } }>;
+    recommendedTools: () => Array<{ id: number; name: string; reason: string; matchScore: number }>;
+    setRecommendationProfile: (profile: { objective: string; budget: string; experience: string }) => void;
     searchTerm: { set: (value: string) => void };
     updateLanguage: (event: { target: { value: string } }) => void;
     selectCategory: (category: string) => void;
     clearFilters: () => void;
+    clearComparison: () => void;
     toggleCompareTool: (toolId: number) => void;
     isToolSelectedForComparison: (toolId: number) => boolean;
     toggleFavorite: (toolId: number) => void;
     isFavorite: (toolId: number) => boolean;
+    promptText: { set: (value: string) => void };
+    updatePromptIntent: (event: { target: { value: string } }) => void;
+    promptResult: () => PromptMatchResult | null;
+    promptInputError: () => string;
+    analyzePrompt: () => void;
   };
 
   beforeEach(() => {
-    app = new App() as App & {
-      title: () => string;
-      language: () => 'es' | 'en';
-      labels: () => {
-        clearFilters: string;
-        catalog: string;
-        compareTools: string;
-        compareEmpty: string;
-        compareSelectionHint: string;
-        favorites: string;
-        favoritesEmpty: string;
-        favoriteTool: string;
-        removeFavorite: string;
-        benchmark: string;
-        benchmarkEmpty: string;
-      };
-      tools: () => Array<{ name: string; category: string; useCase: string }>; 
-      filteredTools: () => Array<{ category: string; name: string }>; 
-      compareToolsList: () => Array<{ id: number; name: string }>;
-      favoritesList: () => Array<{ id: number; name: string }>;
-      benchmarkTools: () => Array<{ id: number; name: string; benchmark: { score: number; source: string; methodology: string; confidence: string } }>;
-      searchTerm: { set: (value: string) => void };
-      updateLanguage: (event: { target: { value: string } }) => void;
-      selectCategory: (category: string) => void;
-      clearFilters: () => void;
-      toggleFavorite: (toolId: number) => void;
-      isFavorite: (toolId: number) => boolean;
-    };
+    app = new App() as unknown as typeof app;
   });
 
   it('should create the app', () => {
@@ -141,5 +130,122 @@ describe('App', () => {
   it('should show an empty benchmark message when no data is available', () => {
     expect(app.benchmarkTools().some((tool) => tool.id === 99)).toBe(false);
     expect(app.labels().benchmarkEmpty).toContain('sin benchmarks');
+  });
+
+  it('should keep profile recommendations available alongside benchmark data', () => {
+    app.setRecommendationProfile({ objective: 'desarrollo', budget: 'moderate', experience: 'advanced' });
+
+    expect(app.recommendedTools()[0].reason.toLowerCase()).toContain('desarrollo');
+    expect(app.benchmarkTools().length).toBeGreaterThan(0);
+    expect(app.labels().recommendations).toContain('Recomendaciones');
+    expect(app.labels().benchmark).toContain('Benchmark');
+  });
+
+  it('should analyze the prompt against the local catalog and return candidates', () => {
+    app.promptText.set('Necesito ayuda con programación y revisión de código');
+    app.analyzePrompt();
+
+    expect(app.promptResult()?.status).toBe('results');
+    expect(app.promptResult()?.matches[0].tool.name).toBe('GitHub Copilot');
+  });
+
+  it('should expose catalog-based reasons and clarify that fit is relative', () => {
+    app.promptText.set('Necesito ayuda con programación y revisión de código');
+    app.analyzePrompt();
+
+    expect(app.promptResult()?.matches[0].reasons.length).toBeGreaterThan(0);
+    expect(app.promptResult()?.matches[0].evidence.length).toBeGreaterThan(0);
+    expect(app.labels().promptFitNote).toContain('no es una probabilidad');
+  });
+
+  it('should expose a localized privacy notice and not restore prompts in a new app instance', () => {
+    expect(app.labels().promptTitle).toBe('Encuentra la IA adecuada');
+    expect(app.labels().promptPrivacyNotice).toContain('no se guarda');
+
+    app.promptText.set('texto confidencial');
+    const freshApp = new App() as typeof app;
+    expect(freshApp.promptText()).toBe('');
+
+    app.updateLanguage({ target: { value: 'en' } } as any);
+    expect(app.labels().promptPrivacyNotice).toContain('not stored');
+  });
+
+  it('should replace the detected task when the user corrects the intent', () => {
+    app.promptText.set('Necesito ayuda con programación y revisión de código');
+    app.analyzePrompt();
+    expect(app.promptResult()?.matches[0].tool.name).toBe('GitHub Copilot');
+
+    app.updatePromptIntent({ target: { value: 'investigación de fuentes' } } as any);
+    app.analyzePrompt();
+
+    expect(app.promptResult()?.taskTypes).toEqual(['investigación']);
+    expect(app.promptResult()?.matches[0].tool.name).toBe('Perplexity');
+  });
+
+  it('should reject prompts over 4,000 characters and report unsupported tasks', () => {
+    app.promptText.set('x'.repeat(4001));
+    app.analyzePrompt();
+
+    expect(app.promptInputError()).toBe(app.labels().promptTooLong);
+    expect(app.promptResult()).toBeNull();
+
+    app.promptText.set('Resolver un acertijo sobre volcanes submarinos');
+    app.analyzePrompt();
+    expect(app.promptResult()?.status).toBe('needs-refinement');
+  });
+
+  it('should let the user add a recommended tool to the existing comparison', () => {
+    app.promptText.set('Necesito ayuda con programación y revisión de código');
+    app.analyzePrompt();
+    const recommendedToolId = app.promptResult()?.matches[0].tool.id;
+
+    expect(recommendedToolId).toBeDefined();
+    app.toggleCompareTool(recommendedToolId!);
+
+    expect(app.compareToolsList().some((tool) => tool.id === recommendedToolId)).toBe(true);
+  });
+
+  it('should favor fast, low-cost models for high-volume production classification', () => {
+    app.promptText.set('En producción clasificar 50000 registros al día en menos de 1 segundo y con coste bajo');
+    app.analyzePrompt();
+
+    expect(['Claude Haiku 3.5', 'Gemini 2.0 Flash']).toContain(app.promptResult()?.matches[0].tool.name);
+    expect(app.promptResult()?.constraints).toContain('latencia baja');
+    expect(app.promptResult()?.constraints).toContain('volumen alto');
+  });
+
+  it('should favor local models for sensitive data and wide-context models for large repositories', () => {
+    app.promptText.set('Analizar saldos bancarios privados que no pueden salir del entorno local');
+    app.analyzePrompt();
+    expect(app.promptResult()?.matches[0].tool.category).toBe('Local');
+    expect(app.promptResult()?.matches[0].reasons.join(' ').toLowerCase()).toContain('privacidad');
+
+    app.promptText.set('Analizar un repositorio completo de 500000 tokens con contexto largo');
+    app.analyzePrompt();
+    expect(app.promptResult()?.matches[0].tool.name).toBe('Gemini 2.5 Pro');
+  });
+
+  it('should surface a quality-threshold caveat rather than claiming validated accuracy', () => {
+    app.promptText.set('En producción extraer importes con precisión mínima del 97%');
+    app.analyzePrompt();
+
+    expect(app.promptResult()?.analysisNotes.join(' ')).toContain('97%');
+    expect(app.promptResult()?.matches.every((match) => match.tradeoffs.join(' ').includes('97%'))).toBe(true);
+  });
+
+  it('should compare context windows and deployment privacy from catalog metadata', () => {
+    app.toggleCompareTool(2);
+    app.toggleCompareTool(7);
+
+    const contextRow = app.comparisonRows().find((row) => row.key === 'context');
+    expect(contextRow?.values[0]).toContain('200.000');
+    expect(contextRow?.values[1]).toContain('1.000.000');
+
+    app.clearComparison();
+    app.toggleCompareTool(2);
+    app.toggleCompareTool(12);
+    const privacyRow = app.comparisonRows().find((row) => row.key === 'privacy');
+    expect(privacyRow?.values[0].toLowerCase()).toContain('cloud');
+    expect(privacyRow?.values[1].toLowerCase()).toContain('local');
   });
 });

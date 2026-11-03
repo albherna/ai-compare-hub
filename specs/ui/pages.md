@@ -28,6 +28,11 @@ Home
 │   ├── Based on profile
 │   ├── Based on use case
 │   └── Best alternatives
+├── Prompt Matcher
+│   ├── Prompt input
+│   ├── Detected intent and requirements
+│   ├── Ranked agent/model recommendations
+│   └── Alternatives and comparison
 ├── Profile
 │   ├── My goals
 │   ├── Preferences
@@ -90,7 +95,17 @@ Home
 - Puntaje relativo
 - Explicación del porqué
 
-### 3.6 Profile
+### 3.6 Prompt Matcher
+**Objetivo**: encontrar agentes o modelos adecuados para una tarea descrita en lenguaje natural, sin exigir que el usuario conozca previamente el catálogo.
+
+**Contenido principal**:
+- Campo para introducir el prompt y estado de análisis
+- Resumen editable de intención, tarea y requisitos detectados
+- Candidatos ordenados con explicación, limitaciones y datos faltantes
+- Acciones para refinar la consulta, abrir un detalle o comparar alternativas
+- Aviso claro sobre el tratamiento efímero del prompt
+
+### 3.7 Profile
 **Objetivo**: recoger contexto del usuario para mejorar recomendaciones.
 
 **Contenido principal**:
@@ -100,7 +115,7 @@ Home
 - Categorías de interés
 - Herramientas guardadas
 
-### 3.7 Editorial / About
+### 3.8 Editorial / About
 **Objetivo**: aportar credibilidad y trazabilidad sobre el contenido.
 
 **Contenido principal**:
@@ -138,6 +153,13 @@ Home
 2. Revisa comparativas previas.
 3. Actualiza filtros o selecciona una alternativa.
 4. Continúa la decisión sin perder contexto.
+
+### Flujo 5: Encontrar una IA a partir de un prompt
+1. El usuario introduce un prompt y solicita recomendaciones.
+2. El sistema muestra la intención y los requisitos detectados.
+3. El usuario confirma o corrige el resumen.
+4. El sistema presenta candidatos del catálogo ordenados, con razones y trade-offs.
+5. El usuario abre el detalle de una opción, compara alternativas o refina la consulta.
 
 ## 5. Navigation Model
 

@@ -33,6 +33,15 @@ Conjunto de atributos que describen el tipo de usuario, sus objetivos, nivel de 
 ### Recommendation (Recomendación)
 Sugerencia de una o varias herramientas según el perfil del usuario, el caso de uso y las restricciones de costo o capacidad.
 
+### Prompt Analysis (Análisis de prompt)
+Interpretación de la intención, el tipo de tarea y los requisitos expresados en un prompt para encontrar herramientas del catálogo adecuadas. No implica ejecutar el prompt ni generar la respuesta solicitada.
+
+### Prompt-Based Recommendation (Recomendación basada en prompt)
+Selección explicable y contextual de agentes o modelos del catálogo a partir de los requisitos detectados en un prompt, incluyendo alternativas, trade-offs e incertidumbre cuando corresponda.
+
+### Decision Axes (Ejes de decisión)
+Factores que condicionan la adecuación de un modelo a una tarea: capacidad necesaria frente a coste, latencia, privacidad y lugar de ejecución, ventana de contexto y etapa de desarrollo o producción. Los valores editoriales deben distinguirse de benchmarks verificados.
+
 ### Comparison Session (Sesión de comparación)
 Instancia en la que un usuario selecciona dos o más herramientas y observa sus diferencias a través de una vista comparativa.
 
@@ -87,6 +96,7 @@ El lenguaje ubicuo del producto se utiliza de forma consistente en toda la exper
 - Revisar benchmarks
 - Consultar precios
 - Recibir recomendación
+- Recomendar IA a partir de un prompt
 - Evaluar adecuación por perfil
 - Guardar comparación
 - Explorar por caso de uso
@@ -115,6 +125,7 @@ Para evitar interpretaciones inconsistentes:
 - “Benchmark” se refiere a una comparación de capacidades, no a una prueba técnica exhaustiva de laboratorio.
 - “Precio” incluye tanto modelos freemium como planes de suscripción, siempre con referencia explícita a la estructura de cada proveedor.
 - “Recomendación” no es una decisión absoluta: es una sugerencia contextual basada en perfil y objetivos.
+- “Mejor agente o modelo para un prompt” significa el mejor ajuste entre los candidatos conocidos del catálogo para los requisitos detectados; no es una garantía universal de calidad ni supone ejecutar el prompt.
 - “Categoría” se define por caso de uso principal, no por marca o proveedor.
 
 ## 8. Términos excluidos del dominio principal
