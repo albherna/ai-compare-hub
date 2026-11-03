@@ -52,6 +52,7 @@ Atributos principales:
 - description
 - status
 - categories
+- decisionAxes (capacidad, coste relativo, latencia, privacidad/despliegue, contexto y procedencia)
 - releaseDate
 - website
 - updatedAt
@@ -61,6 +62,7 @@ Relaciones:
 - Una herramienta tiene varias capacidades.
 - Una herramienta puede ofrecer varios planes de precios.
 - Una herramienta tiene múltiples benchmarks o evaluaciones.
+- Los ejes sin metadata se consideran desconocidos; los perfiles editoriales no sustituyen benchmarks verificables.
 
 ### 2.4 Category
 Representa la clasificación funcional de una herramienta.
@@ -151,7 +153,7 @@ Relaciones:
 - Un tool puede aparecer en múltiples comparison sessions.
 
 ### 2.10 Recommendation
-Representa la sugerencia de herramienta o conjunto de herramientas según el perfil del usuario.
+Representa la sugerencia de herramienta o conjunto de herramientas según el perfil del usuario o la intención de un prompt.
 
 Atributos principales:
 - recommendationId
@@ -162,8 +164,37 @@ Atributos principales:
 - recommendedToolIds
 
 Relaciones:
-- Una recomendación se genera desde un UserProfile y un conjunto de herramientas.
+- Una recomendación se genera desde un UserProfile o un PromptAnalysis y un conjunto de herramientas.
 - Puede estar asociada a un caso de uso específico.
+
+### 2.11 PromptAnalysis
+Representa el resumen temporal de intención, tarea y restricciones relevantes extraídas de un prompt para orientar una recomendación.
+
+Atributos principales:
+- intent
+- taskType
+- requirements
+- constraints
+- analyzedAt
+
+Relaciones:
+- Una PromptAnalysis genera una recomendación contextual.
+- El texto original del prompt no se conserva después de la consulta sin consentimiento explícito.
+
+### 2.12 ToolMatch
+Representa la adecuación de una herramienta del catálogo a los requisitos identificados en una PromptAnalysis.
+
+Atributos principales:
+- toolId
+- fitScore
+- rationale
+- tradeoffs
+- confidence
+- evidenceReferences
+
+Relaciones:
+- Cada ToolMatch pertenece a una PromptAnalysis.
+- Cada ToolMatch referencia una herramienta registrada en el catálogo.
 
 ## 3. Relationships
 
@@ -191,6 +222,9 @@ erDiagram
     TOOL ||--o{ BENCHMARK : has
     TOOL }o--o{ CATEGORY : belongs_to
     USERPROFILE ||--o{ RECOMMENDATION : drives
+    PROMPTANALYSIS ||--o{ RECOMMENDATION : informs
+    PROMPTANALYSIS ||--o{ TOOLMATCH : ranks
+    TOOL ||--o{ TOOLMATCH : matched
     TOOL ||--o{ RECOMMENDATION : recommended
 ```
 
@@ -206,6 +240,9 @@ El lenguaje ubicuo del dominio debe usarse de manera consistente en toda la plat
 - comparación
 - perfil
 - recomendación
+- prompt
+- intención de tarea
+- adecuación de herramienta
 - caso de uso
 - comparación por objetivo
 
@@ -215,7 +252,11 @@ El lenguaje ubicuo del dominio debe usarse de manera consistente en toda la plat
 - Cada comparación debe contener un mínimo de dos herramientas para ser válida.
 - Cada perfil de usuario debe incluir un objetivo principal o caso de uso base.
 - El contenido de benchmark debe estar asociado a una fuente o fecha de validación.
+- Los metadatos de coste, latencia, privacidad y contexto deben declarar su procedencia y fecha cuando se conozcan.
+- Los valores ausentes no se infieren a partir del score global de la herramienta.
 - Las recomendaciones deben distinguir claramente entre sugerencia y valor absoluto.
+- El análisis de prompt solo orienta la selección; no ejecuta el prompt contra las herramientas recomendadas.
+- El prompt original es efímero por defecto y no se comparte con proveedores sin consentimiento explícito.
 
 ## 7. Domain Boundaries
 

@@ -30,6 +30,35 @@ Selection + Matrix Components
 ↓
 Comparison Tests
 
+FAV-001
+↓
+Favorites and Saved Shortlist
+↓
+Favorites Panel
+↓
+Favorite Toggle + Saved State
+↓
+Favorites Tests
+
+FR-026..FR-037, NFR-011, SEC-010
+↓
+PRM-001 — Prompt-Based Matching
+↓
+Prompt Matcher + Recommendation Results
+↓
+Prompt Analysis, Decision Axes, and Evidence Validation
+↓
+Prompt Matching Tests
+BEN-001
+↓
+Benchmark and Ranking Overview
+↓
+Benchmark Panel
+↓
+Benchmark Metrics + Source Context
+↓
+Benchmark Tests
+
 FR-001
 ↓
 Catalog Feature
@@ -49,6 +78,16 @@ Comparison Page
 Comparison Matrix
 ↓
 Comparison Tests
+
+REC-001
+↓
+Recommendation Engine and Personalization
+↓
+Recommendation Panel
+↓
+Profile + Recommendation Logic
+↓
+Recommendation Tests
 
 FR-009
 ↓

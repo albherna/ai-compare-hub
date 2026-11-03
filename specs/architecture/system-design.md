@@ -103,6 +103,7 @@ La API debe estar diseñada como un backend orientado a servicio para la lógica
 - Carga y validación de metadata y capacidades.
 - Comparación con definiciones de atributos y requisitos.
 - Recomendaciones a partir del perfil del usuario.
+- Análisis de intención de prompts y correspondencia explicable con herramientas del catálogo.
 - Seguridad y control de acceso.
 - Integración de fuentes externas y normalización de datos.
 
@@ -111,6 +112,7 @@ La API debe estar diseñada como un backend orientado a servicio para la lógica
 - ToolCatalogService
 - ComparisonService
 - RecommendationService
+- PromptMatchingService
 - BenchmarkService
 - UserProfileService
 - ContentValidationService
@@ -136,6 +138,7 @@ PostgreSQL será la base de datos principal para soportar el producto y mantener
 - Benchmarks
 - Comparison sessions
 - Recommendations
+- Análisis efímero de prompts y resultados de correspondencia
 - Content validation metadata
 
 ### Database principles
@@ -169,6 +172,7 @@ PostgreSQL será la base de datos principal para soportar el producto y mantener
 - External data must be normalized before entering the product model.
 - Sources must be traceable, versioned and tagged when used in comparisons.
 - Benchmarks must be labeled as editorial, estimated or external.
+- Prompt matching must use catalog data and must not forward submitted prompts to evaluated tool providers; retention requires explicit consent.
 - Failures in external systems must not break the experience of core catalog browsing.
 
 ## 9. Security Architecture

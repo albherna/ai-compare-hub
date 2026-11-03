@@ -77,7 +77,8 @@ h1 {
 .secondary-button,
 .primary-button,
 .filter-chip,
-.compare-toggle {
+.compare-toggle,
+.favorite-toggle {
   border: none;
   border-radius: 999px;
   transition: all 0.2s ease;
@@ -278,6 +279,18 @@ h1 {
   color: white;
 }
 
+.favorite-toggle {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+}
+
+.favorite-toggle.is-favorite {
+  background: #f59e0b;
+  color: white;
+}
+
 .empty-state,
 .comparison-empty-state {
   background: rgba(255, 255, 255, 0.8);
@@ -293,7 +306,9 @@ h1 {
   color: #475569;
 }
 
-.comparison-panel {
+.comparison-panel,
+.favorites-panel,
+.benchmark-panel {
   margin-top: 2.5rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.8);
@@ -355,6 +370,222 @@ h1 {
   line-height: 1.5;
 }
 
+.benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.benchmark-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid #dfe7f5;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.benchmark-metrics {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.benchmark-metric {
+  display: grid;
+  gap: 0.25rem;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.benchmark-metric span {
+  color: #64748b;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.benchmark-metric strong {
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.prompt-matcher-panel {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-left: 5px solid #0f766e;
+  border-radius: 0.8rem;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.prompt-matcher-panel h2,
+.prompt-matcher-panel h3,
+.prompt-matcher-panel h4,
+.prompt-matcher-panel h5 {
+  margin: 0;
+}
+
+.prompt-description,
+.privacy-notice,
+.prompt-empty-state {
+  color: #475569;
+  line-height: 1.5;
+}
+
+.prompt-matcher-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.prompt-matcher-form > label,
+.prompt-intent-field > span {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.prompt-matcher-form textarea,
+.prompt-intent-field input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #94a3b8;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #0f172a;
+  padding: 0.8rem 0.9rem;
+}
+
+.prompt-matcher-form textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+
+.prompt-matcher-form textarea:focus-visible,
+.prompt-intent-field input:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, 0.28);
+  outline-offset: 2px;
+}
+
+.prompt-form-footer,
+.prompt-result-heading,
+.prompt-match-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.privacy-notice,
+.prompt-error,
+.prompt-description,
+.prompt-result-heading p {
+  margin: 0;
+}
+
+.privacy-notice {
+  font-size: 0.875rem;
+}
+
+.prompt-error {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.prompt-results {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #dbe4f1;
+}
+
+.prompt-result-heading {
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.prompt-result-heading > div,
+.prompt-intent-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.prompt-intent-field {
+  width: min(100%, 25rem);
+}
+
+.prompt-update-button {
+  margin-bottom: 1rem;
+}
+
+.prompt-fit-note,
+.prompt-analysis-note,
+.prompt-criteria {
+  margin: 0 0 0.6rem;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.prompt-criteria {
+  color: #334155;
+}
+
+.prompt-criteria ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin: 0.35rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.prompt-match-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.prompt-match-item {
+  padding: 1rem;
+  border: 1px solid #dbe4f1;
+  border-radius: 0.6rem;
+  background: #f8fafc;
+}
+
+.prompt-match-item h5 {
+  margin-top: 0.85rem;
+}
+
+.prompt-match-item ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.25rem;
+  color: #334155;
+}
+
+.prompt-match-item .compare-toggle {
+  margin-top: 1rem;
+}
+
+.favorite-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid #dfe7f5;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.favorite-card h3 {
+  margin: 0;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -377,5 +608,19 @@ h1 {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .prompt-matcher-panel {
+    padding: 1rem;
+  }
+
+  .prompt-result-heading,
+  .prompt-form-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .prompt-intent-field {
+    width: 100%;
   }
 }
